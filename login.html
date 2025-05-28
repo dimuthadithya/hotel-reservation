@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - DreamStay Hotel</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="assets/css/auth.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <a href="index.html">
+            <img
+              src="assets/img/logo.png"
+              alt="DreamStay Hotel"
+              class="img-fluid mb-2"
+              style="max-width: 120px"
+            />
+          </a>
+          <h1>Welcome Back</h1>
+          <p>Sign in to access your account</p>
+        </div>
+        <form id="loginForm">
+          <div class="form-floating">
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="name@example.com"
+              required
+            />
+            <label for="email">Email address</label>
+          </div>
+
+          <div class="form-floating position-relative">
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="Password"
+              required
+            />
+            <label for="password">Password</label>
+            <button
+              type="button"
+              class="password-toggle"
+              id="passwordToggle"
+              tabindex="-1"
+            >
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe" />
+              <label class="form-check-label" for="rememberMe"
+                >Remember me</label
+              >
+            </div>
+            <a href="#" class="text-primary small" style="font-size: 0.8rem"
+              >Forgot password?</a
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-btn">
+            Sign In
+          </button>
+        </form>
+
+        <div class="social-auth">
+          <p>Or continue with</p>
+          <div class="social-buttons">
+            <a href="#" class="social-btn">
+              <i class="fab fa-google"></i>
+            </a>
+            <a href="#" class="social-btn">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-btn">
+              <i class="fab fa-apple"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="auth-links">
+          <p>Don't have an account? <a href="register.html">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeLoginPage();
+      });
+    </script>
+  </body>
+</html>
