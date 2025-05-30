@@ -52,7 +52,7 @@ function initHotelManagement() {
   // Load hotels
   loadHotels();
 
-  // Handle hotel form submission
+  // Handle add hotel form submission
   const addHotelForm = document.getElementById('addHotelForm');
   if (addHotelForm) {
     addHotelForm.addEventListener('submit', function (e) {
@@ -61,6 +61,23 @@ function initHotelManagement() {
       // Close modal after submission
       const modal = bootstrap.Modal.getInstance(
         document.getElementById('addHotelModal')
+      );
+      modal.hide();
+    });
+  }
+
+  // Handle edit hotel form submission
+  const editHotelForm = document.getElementById('editHotelForm');
+  if (editHotelForm) {
+    editHotelForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      // Add the hotel ID to the form data
+      formData.append('hotelId', document.getElementById('editHotelId').value);
+      saveHotel(formData);
+      // Close modal after submission
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById('editHotelModal')
       );
       modal.hide();
     });
@@ -174,15 +191,89 @@ function loadHotels() {
 }
 
 function saveHotel(formData) {
+  // Get the hotel ID from the form if it exists (for editing)
+  const hotelId = formData.get('hotelId');
+
   // In production, this would be an API call
-  console.log('Saving hotel...', formData);
-  showToast('Hotel saved successfully!', 'success');
+  // Here we just simulate saving the data
+  console.log('Saving hotel...', {
+    id: hotelId || Date.now(), // Use current timestamp as ID for new hotels
+    name: formData.get('name'),
+    description: formData.get('description'),
+    location: formData.get('location'),
+    category: formData.get('category'),
+    price: formData.get('price'),
+    rooms: formData.get('rooms'),
+    status: formData.get('status')
+    // In a real app, we would handle file uploads here
+  });
+
+  showToast(`Hotel ${hotelId ? 'updated' : 'added'} successfully!`, 'success');
   loadHotels(); // Reload the hotels list
 }
 
 function editHotel(hotelId) {
-  // Implement hotel editing logic
-  showToast('Opening hotel editor...', 'info');
+  // Find the hotel data from our sample data
+  const hotels = [
+    {
+      id: 1,
+      name: 'Luxury Resort Kandy',
+      description: 'Luxury resort with stunning views of Kandy Lake',
+      location: 'Kandy, Sri Lanka',
+      category: 'luxury',
+      rating: 4.8,
+      status: 'active',
+      price: '200',
+      rooms: 50,
+      imageUrl: '../assets/img/luxury-suite.jpg',
+      amenities: ['WiFi', 'Pool', 'Spa', 'Restaurant']
+    },
+    {
+      id: 2,
+      name: 'Beach Villa Resort',
+      description: 'Beautiful beachfront resort in historic Galle',
+      location: 'Galle, Sri Lanka',
+      category: 'resort',
+      rating: 4.6,
+      status: 'active',
+      price: '180',
+      rooms: 35,
+      imageUrl: '../assets/img/beach-villa.jpg',
+      amenities: ['Beach Access', 'Pool', 'Restaurant']
+    }
+  ];
+
+  const hotel = hotels.find((h) => h.id === hotelId);
+  if (!hotel) {
+    showToast('Hotel not found', 'error');
+    return;
+  }
+
+  // Populate the form fields
+  document.getElementById('editHotelId').value = hotel.id;
+  document.getElementById('editHotelName').value = hotel.name;
+  document.getElementById('editHotelDescription').value = hotel.description;
+  document.getElementById('editHotelLocation').value = hotel.location;
+  document.getElementById('editHotelCategory').value = hotel.category;
+  document.getElementById('editHotelPrice').value = hotel.price;
+  document.getElementById('editHotelRooms').value = hotel.rooms;
+  document.getElementById('editHotelStatus').value = hotel.status;
+
+  // Show current photos (simplified version)
+  const currentPhotosContainer = document.getElementById(
+    'editHotelCurrentPhotos'
+  );
+  currentPhotosContainer.innerHTML = `
+    <div class="col-4">
+      <img src="${hotel.imageUrl}" class="img-fluid rounded" />
+    </div>
+  `;
+
+  // Show the modal
+  const editModal = new bootstrap.Modal(
+    document.getElementById('editHotelModal')
+  );
+  editModal.show();
 }
 
 function deleteHotel(hotelId) {

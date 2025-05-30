@@ -64,14 +64,22 @@
               <a class="nav-link" href="search-listings.html">Places to Stay</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#experiences">Experiences</a>
+              <a class="nav-link" href="about.html">About Us</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#destinations">Destinations</a>
+              <a class="nav-link" href="contact.html">Contact</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
               <a
-                class="nav-link dropdown-toggle"
+                class="btn btn-primary btn-sm ms-2"
+                href="search-listings.html"
+              >
+                <i class="fas fa-search me-1"></i>Find Stays
+              </a>
+            </li>
+            <li class="nav-item dropdown ms-2">
+              <a
+                class="nav-link dropdown-toggle d-flex align-items-center"
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -80,29 +88,43 @@
               >
                 <img
                   src="assets/img/avatar1.jpg"
-                  alt="Profile"
-                  class="rounded-circle"
+                  alt="Sarah Mitchell"
+                  class="rounded-circle me-2"
                   width="32"
                   height="32"
                 />
+                <span>Sarah Mitchell</span>
               </a>
               <ul
                 class="dropdown-menu dropdown-menu-end"
                 aria-labelledby="navbarDropdown"
               >
                 <li>
-                  <a class="dropdown-item active" href="dashboard.html"
-                    >My Account</a
-                  >
+                  <a class="dropdown-item active" href="dashboard.html">
+                    <i class="fas fa-user me-2"></i>My Account
+                  </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#bookings">My Bookings</a>
+                  <a class="dropdown-item" href="#bookings">
+                    <i class="fas fa-calendar-check me-2"></i>My Bookings
+                  </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#favorites">Favorites</a>
+                  <a class="dropdown-item" href="#favorites">
+                    <i class="fas fa-heart me-2"></i>Favorites
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="admin/index.html">
+                    <i class="fas fa-cog me-2"></i>Admin Panel
+                  </a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="login.html">Sign Out</a></li>
+                <li>
+                  <a class="dropdown-item" href="login.html">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -761,9 +783,15 @@ Passionate traveler, always seeking new adventures and experiences.</textarea
           <div class="col-md-3 mb-4">
             <h5 class="mb-3">Follow Us</h5>
             <div class="social-links">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
             </div>
           </div>
         </div>
