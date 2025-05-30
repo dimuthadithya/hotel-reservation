@@ -14,11 +14,6 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    date_of_birth DATE,
-    nationality VARCHAR(50),
-    address TEXT,
-    city VARCHAR(50),
-    country VARCHAR(50),
     profile_image VARCHAR(255),
     -- Role-based system
     user_role ENUM('customer', 'admin', 'super_admin', 'moderator', 'hotel_manager') DEFAULT 'customer',
@@ -239,9 +234,9 @@ INSERT INTO users (username, first_name, last_name, email, password, user_role, 
 '{"reviews": "moderate", "hotels": "view", "bookings": "view"}', 'active');
 
 -- Insert sample customer
-INSERT INTO users (first_name, last_name, email, password, phone, nationality, user_role) VALUES
-('John', 'Doe', 'john.doe@email.com', '$2y$10$example_hashed_password', '+1234567890', 'American', 'customer'),
-('Jane', 'Smith', 'jane.smith@email.com', '$2y$10$example_hashed_password', '+9876543210', 'British', 'customer');
+INSERT INTO users (first_name, last_name, email, password, phone, user_role) VALUES
+('John', 'Doe', 'john.doe@email.com', '$2y$10$example_hashed_password', '+1234567890',  'customer'),
+('Jane', 'Smith', 'jane.smith@email.com', '$2y$10$example_hashed_password', '+9876543210', 'customer');
 
 -- Insert sample locations
 INSERT INTO locations (location_name, district, province, is_popular) VALUES
