@@ -1,27 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Tab Navigation
-  const tabLinks = document.querySelectorAll('.nav-link');
-  const tabContents = document.querySelectorAll('.tab-pane');
+  // Initialize Bootstrap tabs
+  const triggerTabList = [].slice.call(
+    document.querySelectorAll('.nav-tabs a')
+  );
+  triggerTabList.forEach(function (triggerEl) {
+    // Create a new Tab instance for each nav item
+    const tabTrigger = new bootstrap.Tab(triggerEl);
 
-  tabLinks.forEach((link) => {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-
-      // Remove active class from all tabs and contents
-      tabLinks.forEach((tab) => tab.classList.remove('active'));
-      tabContents.forEach((content) =>
-        content.classList.remove('active', 'show')
-      );
-
-      // Add active class to clicked tab
-      this.classList.add('active');
-
-      // Show corresponding content
-      const contentId = this.getAttribute('href');
-      const content = document.querySelector(contentId);
-      if (content) {
-        content.classList.add('active', 'show');
-      }
+    triggerEl.addEventListener('click', function (event) {
+      event.preventDefault();
+      tabTrigger.show();
     });
   });
 
