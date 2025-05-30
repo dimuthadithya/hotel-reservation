@@ -16,12 +16,17 @@
     />
     <!-- Custom CSS -->
     <link href="assets/css/styles.css" rel="stylesheet" />
+    <link href="assets/css/nav.css" rel="stylesheet" />
+    <link href="assets/css/footer.css" rel="stylesheet" />
   </head>
   <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
       <div class="container">
-        <a class="navbar-brand" href="index.html">DreamStay Hotel</a>
+        <a class="navbar-brand" href="index.html">
+          Pearl Stay
+          <span class="text-muted small">Sri Lankan Hospitality</span>
+        </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -31,25 +36,29 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item">
-              <a class="nav-link" href="#rooms">Rooms</a>
+              <a class="nav-link active" href="index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#about">About</a>
+              <a class="nav-link" href="search-listings.html">Places to Stay</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#contact">Contact</a>
+              <a class="nav-link" href="#experiences">Experiences</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#destinations">Destinations</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="login.html">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="register.html">Register</a>
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-primary ms-2" href="#book">Book Now</a>
+              <a
+                class="btn btn-primary btn-sm ms-2"
+                href="search-listings.html"
+              >
+                <i class="fas fa-search me-1"></i>Find Stays
+              </a>
             </li>
           </ul>
         </div>

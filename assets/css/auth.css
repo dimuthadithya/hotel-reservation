@@ -1,21 +1,31 @@
+:root {
+    --primary-color: #00796B;    /* Deep Teal */
+    --secondary-color: #004D40;  /* Dark Teal */
+    --accent-color: #FFA000;     /* Amber */
+    --background-light: #F5F6FA;
+    --text-dark: #263238;
+    --border-color: #E0E0E0;
+}
+
 /* Auth pages shared styles */
 .auth-container {
-    min-height: 100vh;
+    min-height: calc(100vh - 70px); /* Account for navbar height */
     background: url('../img/hero-bg.jpg') center/cover no-repeat;
-    padding: 0;
+    padding: 2rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    margin-top: 0;
 }
 
 .auth-container::before {
     content: '';
     position: absolute;
     width: 100vw;
-    height: 100vh;
-    background: linear-gradient(to bottom right, rgba(34, 34, 34, 0.3), rgba(142, 68, 173, 0.2));
+    height: 100%;
+    background: linear-gradient(to bottom right, rgba(0, 121, 107, 0.3), rgba(0, 77, 64, 0.4));
     backdrop-filter: blur(8px);
     z-index: 0;
 }

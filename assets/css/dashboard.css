@@ -1,0 +1,215 @@
+/* Dashboard Styles */
+:root {
+    --primary-color: #8E44AD;      /* Rich Purple */
+    --secondary-color: #2E4053;    /* Deep Navy */
+    --accent-color: #E67E22;       /* Warm Orange */
+    --background-light: #F5F6FA;   /* Light Gray */
+    --text-dark: #2C3E50;         /* Dark Blue Gray */
+    --success-color: #2ECC71;     /* Green */
+    --warning-color: #F1C40F;     /* Yellow */
+}
+
+.dashboard-container {
+    background-color: var(--background-light);
+    min-height: calc(100vh - 70px);
+    padding: 40px 0;
+}
+
+/* Profile Section */
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-info h2 {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.profile-status {
+    color: var(--success-color);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Navigation Tabs */
+.dashboard-tabs {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.nav-tabs {
+    border: none;
+    gap: 0.5rem;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: var(--text-dark);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    background: rgba(142, 68, 173, 0.05);
+}
+
+.nav-tabs .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Content Sections */
+.content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Booking Cards */
+.booking-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.booking-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-upcoming {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+}
+
+.status-completed {
+    background: rgba(46, 68, 173, 0.1);
+    color: var(--primary-color);
+}
+
+.status-cancelled {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.booking-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.booking-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.booking-detail-item i {
+    color: var(--primary-color);
+    width: 20px;
+}
+
+/* Review Cards */
+.review-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.review-hotel-info h5 {
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+}
+
+/* Settings Form */
+.settings-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-form label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .nav-tabs .nav-link {
+        white-space: nowrap;
+    }
+
+    .booking-details {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,254 @@
+/* Booking Page Styles */
+:root {
+    --primary-color: #8E44AD;      /* Rich Purple */
+    --secondary-color: #2E4053;    /* Deep Navy */
+    --accent-color: #E67E22;       /* Warm Orange */
+    --background-light: #F5F6FA;   /* Light Gray */
+    --text-dark: #2C3E50;         /* Dark Blue Gray */
+    --success-color: #2ECC71;     /* Green */
+    --warning-color: #F1C40F;     /* Yellow */
+}
+
+/* Booking Container */
+.booking-container {
+    background-color: var(--background-light);
+    padding: 40px 0;
+    min-height: calc(100vh - 70px);
+}
+
+/* Booking Steps */
+.booking-steps {
+    margin-bottom: 2rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+}
+
+.step-number {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.step-item.active .step-number {
+    background: var(--primary-color);
+    color: white;
+}
+
+.step-item.completed .step-number {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.step-title {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.step-item::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.step-item:last-child::after {
+    display: none;
+}
+
+.step-item.completed::after {
+    background: var(--success-color);
+}
+
+/* Booking Summary Card */
+.booking-summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 90px;
+}
+
+.hotel-thumb {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.summary-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.summary-total {
+    border-top: 2px solid var(--background-light);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    font-weight: 600;
+}
+
+/* Form Styles */
+.booking-form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+
+.form-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-section-title i {
+    color: var(--primary-color);
+}
+
+.date-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.guest-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Payment Method Selection */
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-method-option {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.payment-method-option.selected {
+    border-color: var(--primary-color);
+    background: rgba(142, 68, 173, 0.05);
+}
+
+.payment-method-option i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Policy Section */
+.policy-section {
+    background: rgba(142, 68, 173, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.policy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.policy-item i {
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+}
+
+/* Secure Payment Indicator */
+.secure-payment {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.secure-payment i {
+    font-size: 1.2rem;
+}
+
+/* Card Input Styles */
+.card-input-group {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Terms Checkbox */
+.terms-checkbox {
+    margin: 1.5rem 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .booking-summary-card {
+        position: relative;
+        top: 0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-input-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .date-inputs {
+        grid-template-columns: 1fr;
+    }
+    
+    .step-item::after {
+        width: 50%;
+        right: -25%;
+    }
+}
