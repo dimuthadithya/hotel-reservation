@@ -5,20 +5,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltips.forEach((tooltip) => new bootstrap.Tooltip(tooltip));
 
-  // Hotel Management
+  // Initialize tab functionality
+  document.querySelectorAll('a[data-bs-toggle="tab"]').forEach((tab) => {
+    tab.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = this.getAttribute('href');
+      const tabContent = document.querySelector(target);
+
+      // Remove active class from all tabs and content
+      document
+        .querySelectorAll('.tab-pane')
+        .forEach((pane) => pane.classList.remove('show', 'active'));
+      document
+        .querySelectorAll('.nav-item')
+        .forEach((item) => item.classList.remove('active'));
+
+      // Add active class to clicked tab and content
+      tabContent.classList.add('show', 'active');
+      this.parentElement.classList.add('active');
+
+      // Load content based on tab
+      if (target === '#hotels') {
+        loadHotels();
+      } else if (target === '#bookings') {
+        loadBookings();
+      } else if (target === '#reviews') {
+        loadReviews();
+      } else if (target === '#users') {
+        loadUsers();
+      }
+    });
+  });
+
+  // Initialize components
   initHotelManagement();
-
-  // Booking Management
   initBookingManagement();
-
-  // Review Management
   initReviewManagement();
-
-  // User Management
   initUserManagement();
-
-  // Charts
-  initDashboardCharts();
 });
 
 // Hotel Management Functions
@@ -34,22 +57,48 @@ function initHotelManagement() {
   if (addHotelForm) {
     addHotelForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      // Add hotel logic here
       saveHotel(new FormData(this));
+      // Close modal after submission
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById('addHotelModal')
+      );
+      modal.hide();
     });
   }
 }
 
 function loadHotels() {
-  // Fetch hotels from API
+  // Sample data - in production, this would come from an API
   const hotels = [
-    // Sample data - replace with actual API call
     {
       id: 1,
       name: 'Luxury Resort Kandy',
       location: 'Kandy, Sri Lanka',
       rating: 4.8,
-      status: 'active'
+      status: 'active',
+      price: '$200',
+      imageUrl: '../assets/img/luxury-suite.jpg',
+      amenities: ['WiFi', 'Pool', 'Spa', 'Restaurant']
+    },
+    {
+      id: 2,
+      name: 'Beach Villa Resort',
+      location: 'Galle, Sri Lanka',
+      rating: 4.6,
+      status: 'active',
+      price: '$180',
+      imageUrl: '../assets/img/beach-villa.jpg',
+      amenities: ['Beach Access', 'Pool', 'Restaurant']
+    },
+    {
+      id: 3,
+      name: 'Rustic Cabin Retreat',
+      location: 'Nuwara Eliya, Sri Lanka',
+      rating: 4.5,
+      status: 'active',
+      price: '$150',
+      imageUrl: '../assets/img/rustic-cabin.jpg',
+      amenities: ['Mountain View', 'Fireplace', 'Restaurant']
     }
   ];
 
@@ -59,21 +108,64 @@ function loadHotels() {
   hotelsList.innerHTML = hotels
     .map(
       (hotel) => `
-        <div class="hotel-item" data-id="${hotel.id}">
-            <div class="hotel-details">
-                <h3>${hotel.name}</h3>
-                <p>${hotel.location}</p>
-                <div class="hotel-rating">
-                    ${hotel.rating} <i class="fas fa-star text-warning"></i>
+        <div class="hotel-item">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <img src="${hotel.imageUrl}" alt="${
+        hotel.name
+      }" class="hotel-thumbnail img-fluid rounded" />
                 </div>
-            </div>
-            <div class="hotel-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editHotel(${hotel.id})">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteHotel(${hotel.id})">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
+                <div class="col-md-6">
+                    <div class="hotel-details">
+                        <h4 class="hotel-name">${hotel.name}</h4>
+                        <p class="hotel-location"><i class="fas fa-map-marker-alt text-primary"></i> ${
+                          hotel.location
+                        }</p>
+                        <div class="hotel-rating">
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star"></i> ${hotel.rating}
+                            </span>
+                            <span class="badge bg-${
+                              hotel.status === 'active' ? 'success' : 'danger'
+                            }">
+                                ${hotel.status}
+                            </span>
+                        </div>
+                        <div class="hotel-amenities mt-2">
+                            ${hotel.amenities
+                              .map(
+                                (amenity) =>
+                                  `<span class="badge bg-light text-dark me-1">${amenity}</span>`
+                              )
+                              .join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="hotel-price text-center">
+                        <h5>${hotel.price}</h5>
+                        <small>per night</small>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="hotel-actions d-flex flex-column gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editHotel(${
+                          hotel.id
+                        })">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteHotel(${
+                          hotel.id
+                        })">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="manageRooms(${
+                          hotel.id
+                        })">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     `
@@ -82,8 +174,28 @@ function loadHotels() {
 }
 
 function saveHotel(formData) {
-  // API call to save hotel
+  // In production, this would be an API call
   console.log('Saving hotel...', formData);
+  showToast('Hotel saved successfully!', 'success');
+  loadHotels(); // Reload the hotels list
+}
+
+function editHotel(hotelId) {
+  // Implement hotel editing logic
+  showToast('Opening hotel editor...', 'info');
+}
+
+function deleteHotel(hotelId) {
+  if (confirm('Are you sure you want to delete this hotel?')) {
+    // Implement hotel deletion logic
+    showToast('Hotel deleted successfully!', 'success');
+    loadHotels(); // Reload the hotels list
+  }
+}
+
+function manageRooms(hotelId) {
+  // Implement room management logic
+  showToast('Opening room management...', 'info');
 }
 
 // Booking Management Functions
@@ -317,8 +429,35 @@ function exportBookingReport() {
 
 // Utility Functions
 function showToast(message, type = 'success') {
-  // Implement toast notification
-  console.log(`${type}: ${message}`);
+  const toastContainer = document.createElement('div');
+  toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+  toastContainer.style.zIndex = '9999';
+
+  const toast = document.createElement('div');
+  toast.className = `toast align-items-center text-white bg-${type} border-0`;
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'assertive');
+  toast.setAttribute('aria-atomic', 'true');
+
+  toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+  toastContainer.appendChild(toast);
+  document.body.appendChild(toastContainer);
+
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+
+  // Remove the toast after it's hidden
+  toast.addEventListener('hidden.bs.toast', () => {
+    toastContainer.remove();
+  });
 }
 
 // Event Handlers
