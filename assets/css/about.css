@@ -1,0 +1,370 @@
+/* About Page Styles */
+:root {
+    --primary-color: #8E44AD;      /* Rich Purple */
+    --secondary-color: #2E4053;    /* Deep Navy */
+    --accent-color: #E67E22;       /* Warm Orange */
+    --background-light: #F5F6FA;   /* Light Gray */
+    --text-dark: #2C3E50;         /* Dark Blue Gray */
+    --success-color: #2ECC71;     /* Green */
+}
+
+.about-hero {
+    background: linear-gradient(rgba(46, 64, 83, 0.8), rgba(46, 64, 83, 0.8)),
+                url('../img/hero-bg.jpg') center/cover fixed;
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.about-hero p {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mission-section {
+    background: white;
+    padding: 80px 0;
+}
+
+.mission-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.mission-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.mission-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover .mission-icon {
+    transform: scale(1.1);
+    background: var(--accent-color);
+}
+
+.values-section {
+    background: var(--background-light);
+    padding: 80px 0;
+}
+
+.value-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.value-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.value-card:hover .value-icon {
+    transform: scale(1.1);
+    color: var(--accent-color);
+}
+
+.achievements-section {
+    padding: 80px 0;
+    background: white;
+}
+
+.achievement-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.achievement-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.team-section {
+    background: var(--background-light);
+    padding: 80px 0;
+}
+
+.team-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.team-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.team-card:hover .team-image img {
+    transform: scale(1.1);
+    border-color: var(--accent-color);
+}
+
+.team-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.team-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.team-social a {
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+}
+
+.team-social a:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+.sustainability-section {
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.sustainability-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../img/summer-bg.jpg') center/cover no-repeat;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.sustainability-content {
+    position: relative;
+    z-index: 1;
+}
+
+.eco-initiatives {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.eco-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.eco-icon {
+    color: var(--success-color);
+    font-size: 2rem;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background: var(--primary-color);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1px;
+}
+
+.timeline-item {
+    padding: 10px 40px;
+    position: relative;
+    width: 50%;
+    box-sizing: border-box;
+}
+
+.timeline-item:nth-child(odd) {
+    left: 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+}
+
+.timeline-content {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.timeline-content h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.timeline-item::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+.timeline-item:nth-child(odd)::before {
+    right: -10px;
+}
+
+.timeline-item:nth-child(even)::before {
+    left: -10px;
+}
+
+.timeline-item:hover::before {
+    background: var(--accent-color);
+    transform: translateY(-50%) scale(1.2);
+}
+
+.sustainability-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.sustainability-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.sustainability-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.sustainability-card:hover .sustainability-icon {
+    transform: scale(1.1);
+    color: var(--success-color);
+}
+
+.sustainability-card ul li {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.sustainability-card ul li i {
+    margin-right: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .about-hero {
+        min-height: 60vh;
+    }
+    
+    .timeline::before {
+        left: 31px;
+    }
+    
+    .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+    }
+    
+    .timeline-item:nth-child(even) {
+        left: 0;
+    }
+    
+    .timeline-item::before {
+        left: 21px;
+    }
+    
+    .timeline-item:nth-child(odd)::before {
+        right: auto;
+        left: 21px;
+    }
+    
+    .timeline-item:nth-child(even)::before {
+        left: 21px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .about-hero {
+        min-height: 50vh;
+    }
+    
+    .value-card,
+    .mission-card,
+    .sustainability-card {
+        margin-bottom: 1rem;
+    }
+}

@@ -1,0 +1,224 @@
+/* Search & Listing Page Styles */
+:root {
+    --primary-color: #00796B;    /* Deep Teal */
+    --secondary-color: #004D40;  /* Dark Teal */
+    --accent-color: #FFA000;     /* Amber */
+    --background-light: #F5F6FA;
+    --text-dark: #263238;
+    --border-color: #E0E0E0;
+}
+
+/* Search Header Styles */
+.search-header {
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-summary {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.search-summary i {
+    color: var(--primary-color);
+}
+
+/* Filter Sidebar Styles */
+.filters-sidebar {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Price Range Slider */
+#price-range {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    margin: 1rem 0;
+}
+
+.price-inputs {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Hotel Card Styles */
+.hotel-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease;
+}
+
+.hotel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.hotel-image {
+    position: relative;
+    height: 100%;
+    min-height: 250px;
+}
+
+.hotel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-like {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hotel-rating {
+    margin: 0.5rem 0;
+}
+
+.stars {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    color: #666;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+
+.location {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.location i {
+    color: var(--primary-color);
+    margin-right: 0.3rem;
+}
+
+.review-score {
+    text-align: right;
+}
+
+.score {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.score-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.review-count {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.amenities {
+    margin: 1rem 0;
+}
+
+.amenities .badge {
+    font-weight: 500;
+    padding: 0.5rem 0.8rem;
+    background-color: var(--background-light) !important;
+    border: 1px solid var(--border-color);
+}
+
+.price {
+    text-align: right;
+}
+
+.price small {
+    font-size: 0.8rem;
+}
+
+.price h5 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Star Rating Buttons */
+.star-rating-filters .btn,
+.rating-buttons .btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    border-color: var(--border-color);
+}
+
+.star-rating-filters .btn.active,
+.rating-buttons .btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .filters-sidebar {
+        margin-bottom: 2rem;
+    }
+    
+    .hotel-image {
+        min-height: 200px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .search-summary {
+        flex-wrap: wrap;
+    }
+    
+    .hotel-card .row {
+        flex-direction: column;
+    }
+    
+    .hotel-image {
+        min-height: 180px;
+    }
+}

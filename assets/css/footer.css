@@ -1,0 +1,56 @@
+/* Footer styles */
+footer {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 60px 0 20px;
+    margin-top: 60px;
+}
+
+footer h5 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+footer p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+footer ul li {
+    margin-bottom: 0.5rem;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links a {
+    color: white;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: var(--primary-color);
+    transform: translateY(-3px);
+}
