@@ -1,3 +1,30 @@
+// Bootstrap alert helper function
+function showBootstrapAlert(type, title, message) {
+  let icon = '';
+  switch (type) {
+    case 'success':
+      icon = 'check-circle';
+      break;
+    case 'error':
+      icon = 'exclamation-circle';
+      type = 'danger';
+      break;
+    case 'warning':
+      icon = 'exclamation-triangle';
+      break;
+    case 'info':
+      icon = 'info-circle';
+      break;
+  }
+
+  return `
+    <div class='alert alert-${type} alert-dismissible fade show' role='alert'>
+        <strong><i class='fas fa-${icon} me-2'></i>${title}</strong>
+        ${message ? `<br>${message}` : ''}
+        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const addAmenityForm = document.getElementById('addAmenityForm');
   const editAmenityForm = document.getElementById('editAmenityForm');
@@ -72,10 +99,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         `;
 
             categoryList.appendChild(amenityElement);
-          }
-
-          // Show success message
-          alert('Amenity added successfully!');
+          } // Show success message
+          const alertArea = document.querySelector('.amenities-list');
+          alertArea.insertAdjacentHTML(
+            'afterbegin',
+            showBootstrapAlert(
+              'success',
+              'Success',
+              'Amenity added successfully!'
+            )
+          );
 
           // Reset form and close modal
           addAmenityForm.reset();
@@ -173,10 +206,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                    `;
-
-          // Show success message
-          alert('Amenity updated successfully!');
+                    `; // Show success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Amenity updated successfully!'
+          });
 
           // Close modal
           editAmenityModal.hide();
@@ -216,10 +251,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.target.closest('.delete-amenity')) {
       const button = e.target.closest('.delete-amenity');
       const amenityId = button.dataset.id;
-
-      if (confirm('Are you sure you want to delete this amenity?')) {
-        deleteAmenity(amenityId);
-      }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this amenity?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteAmenity(amenityId);
+        }
+      });
     }
   });
 
@@ -250,13 +294,21 @@ document.addEventListener('DOMContentLoaded', function () {
           const categoryName = categoryList.id.replace('Amenities', '');
           categoryList.innerHTML = `<div class="list-group-item text-muted">No ${categoryName} amenities found</div>`;
         }
-
-        alert('Amenity deleted successfully!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Amenity deleted successfully!'
+        });
       } else {
         throw new Error(data.message);
       }
     } catch (error) {
-      alert('Error: ' + error.message);
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Failed to delete amenity. Please try again.'
+      });
     }
   }
 });

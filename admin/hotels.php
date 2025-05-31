@@ -340,6 +340,32 @@
 </div>
 
 <script>
+    function showBootstrapAlert(type, title, message) {
+        let icon = '';
+        switch (type) {
+            case 'success':
+                icon = 'check-circle';
+                break;
+            case 'error':
+                icon = 'exclamation-circle';
+                type = 'danger';
+                break;
+            case 'warning':
+                icon = 'exclamation-triangle';
+                break;
+            case 'info':
+                icon = 'info-circle';
+                break;
+        }
+
+        return `
+        <div class='alert alert-${type} alert-dismissible fade show' role='alert'>
+            <strong><i class='fas fa-${icon} me-2'></i>${title}</strong>
+            ${message ? `<br>${message}` : ''}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>`;
+    }
+
     function editHotel(hotelId) {
         // Fetch hotel details
         fetch(`handlers/get_hotel.php?id=${hotelId}`)
@@ -376,12 +402,14 @@
                     const editModal = new bootstrap.Modal(document.getElementById('editHotelModal'));
                     editModal.show();
                 } else {
-                    alert('Error loading hotel details');
+                    const alertArea = document.querySelector('.hotels-list');
+                    alertArea.insertAdjacentHTML('afterbegin', showBootstrapAlert('error', 'Error', 'Failed to load hotel details'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error loading hotel details');
+                const alertArea = document.querySelector('.hotels-list');
+                alertArea.insertAdjacentHTML('afterbegin', showBootstrapAlert('error', 'Error', 'Failed to load hotel details'));
             });
     }
 
@@ -400,20 +428,24 @@
                 if (data.status === 'success') {
                     // Close the modal
                     const editModal = bootstrap.Modal.getInstance(document.getElementById('editHotelModal'));
+                    editModal.hide(); // Show success message
+                    const alertArea = document.querySelector('.hotels-list');
+                    alertArea.insertAdjacentHTML('afterbegin', showBootstrapAlert('success', 'Success', data.message));
+
+                    // Close the modal
                     editModal.hide();
 
-                    // Show success message
-                    alert(data.message);
-
-                    // Refresh the hotels list
-                    location.reload();
+                    // Refresh the hotels list after a short delay to show the alert
+                    setTimeout(() => location.reload(), 1500);
                 } else {
-                    alert(data.message || 'Error updating hotel');
+                    const alertArea = document.querySelector('.hotels-list');
+                    alertArea.insertAdjacentHTML('afterbegin',
+                        showBootstrapAlert('error', 'Error', data.message || 'Error updating hotel'));
                 }
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.error('Error:', error);
-                alert('Error updating hotel');
+                const alertArea = document.querySelector('.hotels-list');
+                alertArea.insertAdjacentHTML('afterbegin', showBootstrapAlert('error', 'Error', 'Failed to update hotel. Please try again.'));
             });
     });
 
@@ -431,14 +463,20 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('Hotel amenities updated successfully');
+                    const alertArea = document.querySelector('.hotels-list');
+                    alertArea.insertAdjacentHTML('afterbegin',
+                        showBootstrapAlert('success', 'Success', 'Hotel amenities updated successfully'));
                 } else {
-                    alert(data.message || 'Error updating hotel amenities');
+                    const alertArea = document.querySelector('.hotels-list');
+                    alertArea.insertAdjacentHTML('afterbegin',
+                        showBootstrapAlert('error', 'Error', data.message || 'Error updating hotel amenities'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error updating hotel amenities');
+                const alertArea = document.querySelector('.hotels-list');
+                alertArea.insertAdjacentHTML('afterbegin',
+                    showBootstrapAlert('error', 'Error', 'Error updating hotel amenities'));
             });
     });
 </script>

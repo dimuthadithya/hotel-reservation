@@ -18,7 +18,8 @@
         ?>
       <div class="hotel-card mb-4">
           <div class="row g-0">
-              <div class="col-md-4">                  <div class="hotel-image">
+              <div class="col-md-4">
+                  <div class="hotel-image">
                       <img
                           src="<?= $hotel['main_image'] ? 'uploads/img/hotels/' . $hotel['hotel_id'] . '/' . $hotel['main_image'] : 'assets/img/hotel-placeholder.jpg' ?>"
                           alt="<?= htmlspecialchars($hotel['hotel_name']) ?>"

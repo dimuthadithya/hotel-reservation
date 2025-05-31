@@ -47,17 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
       this.classList.toggle('active');
     });
   });
-
-  // Initialize favorite buttons
-  const favoriteButtons = document.querySelectorAll('.btn-like');
-  favoriteButtons.forEach((button) => {
-    button.addEventListener('click', function () {
-      const icon = this.querySelector('i');
-      icon.classList.toggle('far');
-      icon.classList.toggle('fas');
-      icon.classList.toggle('text-danger');
-    });
-  });
+  // Favorite buttons functionality removed as wishlist feature is no longer used
 
   // Filter show/hide for mobile
   const showFiltersBtn = document.querySelector('.show-filters-btn');
@@ -68,13 +58,36 @@ document.addEventListener('DOMContentLoaded', function () {
       filtersSidebar.classList.toggle('show');
     });
   }
-
   // Sort functionality
   const sortSelect = document.querySelector('select');
   if (sortSelect) {
     sortSelect.addEventListener('change', function () {
-      // Add sorting logic here
-      console.log('Sort by:', this.value);
+      const sortBy = this.value;
+      const hotelCards = Array.from(document.querySelectorAll('.hotel-card'));
+      const hotelContainer = document.querySelector('.hotel-listings');
+
+      if (hotelContainer && hotelCards.length > 0) {
+        hotelCards.sort((a, b) => {
+          const priceA = parseFloat(a.dataset.price || 0);
+          const priceB = parseFloat(b.dataset.price || 0);
+          const ratingA = parseFloat(a.dataset.rating || 0);
+          const ratingB = parseFloat(b.dataset.rating || 0);
+
+          switch (sortBy) {
+            case 'price-low':
+              return priceA - priceB;
+            case 'price-high':
+              return priceB - priceA;
+            case 'rating':
+              return ratingB - ratingA;
+            default:
+              return 0;
+          }
+        });
+
+        hotelContainer.innerHTML = '';
+        hotelCards.forEach((card) => hotelContainer.appendChild(card));
+      }
     });
   }
 });
