@@ -407,9 +407,9 @@ $room_types = $types_stmt->fetchAll(PDO::FETCH_ASSOC);
         // Clear previous form data
         document.getElementById('edit_amenities_container').innerHTML = '';
         document.getElementById('current_images_container').innerHTML = '';
-
+        const hotelId = <?= $hotel_id ?>;
         // Fetch room type details
-        fetch(`handlers/get_room_type.php?id=${roomTypeId}`)
+        fetch(`handlers/get_room_type.php?id=${roomTypeId}&hotel_id=${hotelId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {

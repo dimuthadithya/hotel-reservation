@@ -146,7 +146,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="editHotelForm" method="POST">
+                <form id="editHotelForm" method="POST" action="handlers/update_hotel.php">
                     <input type="hidden" name="hotel_id" id="edit_hotel_id" />
                     <div class="row mb-3">
                         <div class="col-md-12">
@@ -283,6 +283,38 @@
                 alert('Error loading hotel details');
             });
     }
+
+    // Handle edit hotel form submission
+    document.getElementById('editHotelForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch(this.getAttribute('action'), {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Close the modal
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editHotelModal'));
+                    editModal.hide();
+
+                    // Show success message
+                    alert(data.message);
+
+                    // Refresh the hotels list
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error updating hotel');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating hotel');
+            });
+    });
 </script>
 
 <?php include_once 'includes/footer.php'; ?>

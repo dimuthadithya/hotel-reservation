@@ -26,19 +26,9 @@ if ($selected_hotel_id) {
                 <p class="text-muted">Managing rooms for: <?= htmlspecialchars($hotel_name) ?></p>
             <?php endif; ?>
         </div>
-        <div class="header-actions">
-            <button
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#addRoomModal">
-                <i class="fas fa-plus"></i> Add Room
-            </button>
-            <button
-                class="btn btn-outline-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#addRoomTypeModal">
+        <div class="header-actions"> <a href="room_types.php" class="btn btn-primary">
                 <i class="fas fa-list"></i> Manage Room Types
-            </button>
+            </a>
         </div>
     </div>
 
@@ -140,6 +130,7 @@ if ($selected_hotel_id) {
                                     </button>
                                     <form action="handlers/delete_room.php" method="POST" style="display: inline;">
                                         <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
+                                        <input type="hidden" name="hotel_id" value="<?= $room['hotel_id'] ?>">
                                         <button type="submit" class="btn btn-danger btn-sm" title="Delete Room">
                                             <i class="fas fa-trash fa-sm"></i>
                                         </button>
@@ -184,53 +175,43 @@ if ($selected_hotel_id) {
 </style>
 </div>
 
-<!-- Add Room Modal -->
-<div class="modal fade" id="addRoomModal" tabindex="-1">
+<!-- Edit Room Modal -->
+<div class="modal fade" id="editRoomModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Room</h5>
+                <h5 class="modal-title">Edit Room</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="addRoomForm" action="handlers/add_room.php" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Hotel</label>
-                        <select class="form-select" name="hotel_id" required>
-                            <option value="">Select Hotel</option>
-                            <?php
-                            $hotels_sql = "SELECT hotel_id, hotel_name FROM hotels WHERE status = 'active' ORDER BY hotel_name";
-                            $hotels_stmt = $conn->query($hotels_sql);
-                            while ($hotel = $hotels_stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<option value='{$hotel['hotel_id']}'>{$hotel['hotel_name']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                <form id="editRoomForm" action="handlers/edit_room.php" method="POST">
+                    <input type="hidden" name="room_id" id="edit_room_id">
 
                     <div class="mb-3">
                         <label class="form-label">Room Type</label>
-                        <select class="form-select" name="room_type_id" required disabled>
+                        <select class="form-select" name="room_type_id" id="edit_room_type_id" required>
                             <option value="">Select Room Type</option>
+                            <!-- Will be populated by JavaScript -->
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Room Number</label>
-                        <input type="text" class="form-control" name="room_number" required
+                        <input type="text" class="form-control" name="room_number" id="edit_room_number" required
                             placeholder="e.g., 101, A101, etc.">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Floor Number</label>
-                        <input type="number" class="form-control" name="floor_number"
+                        <input type="number" class="form-control" name="floor_number" id="edit_floor_number"
                             placeholder="e.g., 1, 2, etc." required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select class="form-select" name="status" required>
+                        <select class="form-select" name="status" id="edit_status" required>
                             <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
                             <option value="maintenance">Maintenance</option>
                             <option value="out_of_order">Out of Order</option>
                         </select>
@@ -239,42 +220,51 @@ if ($selected_hotel_id) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary" form="addRoomForm">Add Room</button>
+                <button type="submit" class="btn btn-primary" form="editRoomForm">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Load room types based on selected hotel
-    document.querySelector('select[name="hotel_id"]').addEventListener('change', function() {
-        const hotelId = this.value;
-        const roomTypeSelect = document.querySelector('select[name="room_type_id"]');
-
-        if (!hotelId) {
-            roomTypeSelect.disabled = true;
-            roomTypeSelect.innerHTML = '<option value="">Select Room Type</option>';
-            return;
-        }
-
-        // Fetch room types for selected hotel
-        fetch(`handlers/get_room_types.php?hotel_id=${hotelId}`)
+    function editRoom(roomId) {
+        // Fetch room details
+        fetch(`handlers/edit_room.php?room_id=${roomId}`)
             .then(response => response.json())
             .then(data => {
-                roomTypeSelect.disabled = false;
-                roomTypeSelect.innerHTML = '<option value="">Select Room Type</option>';
-
                 if (data.status === 'success') {
-                    data.data.forEach(type => {
-                        roomTypeSelect.innerHTML += `<option value="${type.room_type_id}">${type.type_name}</option>`;
+                    const room = data.data.room;
+                    const roomTypes = data.data.room_types;
+
+                    // Fill the form with room data
+                    document.getElementById('edit_room_id').value = room.room_id;
+                    document.getElementById('edit_room_number').value = room.room_number;
+                    document.getElementById('edit_floor_number').value = room.floor_number;
+                    document.getElementById('edit_status').value = room.status;
+
+                    // Fill room types dropdown
+                    const roomTypeSelect = document.getElementById('edit_room_type_id');
+                    roomTypeSelect.innerHTML = '<option value="">Select Room Type</option>';
+                    roomTypes.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.room_type_id;
+                        option.text = type.type_name;
+                        option.selected = type.room_type_id === room.room_type_id;
+                        roomTypeSelect.appendChild(option);
                     });
+
+                    // Show the modal
+                    const editModal = new bootstrap.Modal(document.getElementById('editRoomModal'));
+                    editModal.show();
+                } else {
+                    alert('Error loading room details: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error loading room types');
+                alert('Error loading room details');
             });
-    });
+    }
 </script>
 
 <?php include_once 'includes/footer.php'; ?>
