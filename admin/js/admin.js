@@ -190,28 +190,6 @@ function loadHotels() {
     .join('');
 }
 
-function saveHotel(formData) {
-  // Get the hotel ID from the form if it exists (for editing)
-  const hotelId = formData.get('hotelId');
-
-  // In production, this would be an API call
-  // Here we just simulate saving the data
-  console.log('Saving hotel...', {
-    id: hotelId || Date.now(), // Use current timestamp as ID for new hotels
-    name: formData.get('name'),
-    description: formData.get('description'),
-    location: formData.get('location'),
-    category: formData.get('category'),
-    price: formData.get('price'),
-    rooms: formData.get('rooms'),
-    status: formData.get('status')
-    // In a real app, we would handle file uploads here
-  });
-
-  showToast(`Hotel ${hotelId ? 'updated' : 'added'} successfully!`, 'success');
-  loadHotels(); // Reload the hotels list
-}
-
 function editHotel(hotelId) {
   // Find the hotel data from our sample data
   const hotels = [
