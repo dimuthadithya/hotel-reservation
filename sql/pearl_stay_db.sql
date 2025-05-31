@@ -197,12 +197,6 @@ CREATE TABLE hotel_images (
     FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id) ON DELETE CASCADE
 );
 
--- Insert Sample Data
-
--- Insert sample users with password '123' (hashed)
-INSERT INTO users (first_name, last_name, email, password, role, account_status) VALUES
-('Admin', 'User', 'admin@admin.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'admin', 'active'),
-('Regular', 'User', 'user@user.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'user', 'active');
 
 -- Insert sample amenities
 INSERT INTO amenities (amenity_name, category, icon_class) VALUES

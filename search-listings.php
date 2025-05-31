@@ -195,20 +195,25 @@ session_start();
         </div>
         <?php        // Loop through each hotel and display the hotel card
         foreach ($hotels as $hotel) {
-          // Add dummy data for fields from other tables
+          // Add dummy rating for now (you can replace this with real ratings later)
           $hotel['average_rating'] = rand(35, 50) / 10;  // Dummy rating between 3.5 and 5.0
 
-          // Customize dummy amenities based on star rating
-          $dummyAmenities = ['Free WiFi', 'Parking', 'Restaurant', 'Air Conditioning'];
-          if ($hotel['star_rating'] >= 4) {
-            $dummyAmenities[] = 'Swimming Pool';
-            $dummyAmenities[] = 'Spa';
+          // Fetch real amenities for this hotel
+          $amenitiesQuery = "SELECT a.amenity_name 
+                           FROM hotel_amenities ha
+                           JOIN amenities a ON ha.amenity_id = a.amenity_id
+                           WHERE ha.hotel_id = ?
+                           ORDER BY a.category";
+          $amenitiesStmt = $conn->prepare($amenitiesQuery);
+          $amenitiesStmt->execute([$hotel['hotel_id']]);
+          $amenities = $amenitiesStmt->fetchAll(PDO::FETCH_COLUMN);
+
+          // If no amenities found, provide some basic ones
+          if (empty($amenities)) {
+            $amenities = ['Free WiFi', 'Parking'];
           }
-          if ($hotel['star_rating'] >= 5) {
-            $dummyAmenities[] = 'Fitness Center';
-            $dummyAmenities[] = 'Room Service';
-          }
-          $hotel['amenities'] = json_encode($dummyAmenities);
+
+          $hotel['amenities'] = json_encode($amenities);
 
           include 'components/hotelCard.php';
         }
