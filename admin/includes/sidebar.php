@@ -24,10 +24,6 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                 <i class="fas fa-hotel"></i> Hotels
             </a>
         </li>
-        <li class="nav-item <?php echo $currentPage === 'locations' ? 'active' : ''; ?>">
-            <a href="locations.php">
-                <i class="fas fa-map-marker-alt"></i> Locations
-            </a>
         </li>
         <li class="nav-item <?php echo $currentPage === 'rooms' ? 'active' : ''; ?>">
             <a href="rooms.php">
@@ -57,11 +53,6 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
         <li class="nav-item <?php echo $currentPage === 'users' ? 'active' : ''; ?>">
             <a href="users.php">
                 <i class="fas fa-users"></i> Users
-            </a>
-        </li>
-        <li class="nav-item <?php echo $currentPage === 'reports' ? 'active' : ''; ?>">
-            <a href="reports.php">
-                <i class="fas fa-chart-bar"></i> Reports
             </a>
         </li>
     </ul>
