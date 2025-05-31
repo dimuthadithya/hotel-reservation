@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Pearl Stay</title>
+  <!-- Favicon -->
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="assets/favicon_io/apple-touch-icon.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="assets/favicon_io/favicon-32x32.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="assets/favicon_io/favicon-16x16.png" />
+  <link rel="manifest" href="assets/favicon_io/site.webmanifest" />
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link href="assets/css/styles.css" rel="stylesheet" />
+  <link href="assets/css/nav.css" rel="stylesheet" />
+  <link href="assets/css/footer.css" rel="stylesheet" />
+  <link href="assets/css/auth.css" rel="stylesheet" />
+</head>
+
+<body>
+  <?php include 'components/nav.php'; ?>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your Pearl Stay account</p>
+      </div>
+
+      <form id="loginForm" novalidate action="./handlers/login.php" method="POST">
+        <div class="form-floating">
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Email address"
+            required />
+          <label for="email">Email address</label>
+          <div class="invalid-feedback">Please enter a valid email address</div>
+        </div>
+
+        <div class="form-floating position-relative">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required />
+          <label for="password">Password</label>
+          <button
+            type="button"
+            class="password-toggle"
+            id="passwordToggle"
+            tabindex="-1">
+            <i class="fas fa-eye"></i>
+          </button>
+          <div class="invalid-feedback">Please enter your password</div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember_me" />
+            <label class="form-check-label" for="rememberMe">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn auth-btn">
+          Sign In
+        </button>
+      </form>
+
+      <div class="social-auth">
+        <p>Or sign in with</p>
+        <div class="social-buttons">
+          <a href="#" class="social-btn">
+            <i class="fab fa-google"></i>
+          </a>
+          <a href="#" class="social-btn">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-btn">
+            <i class="fab fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="auth-links">
+        <p>Don't have an account? <a href="register.php">Create Account</a></p>
+      </div>
+    </div>
+  </div>
+
+  <?php include 'components/footer.php'; ?>
+
+  <!-- Custom JS -->
+  <script src="assets/js/auth.js"></script>
+</body>
+
+</html>

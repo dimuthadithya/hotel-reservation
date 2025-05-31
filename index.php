@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearl Stay - Sri Lankan Hospitality</title>
+  <!-- Favicon -->
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="assets/favicon_io/apple-touch-icon.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="assets/favicon_io/favicon-32x32.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="assets/favicon_io/favicon-16x16.png" />
+  <link rel="manifest" href="assets/favicon_io/site.webmanifest" />
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link href="assets/css/styles.css" rel="stylesheet" />
+  <link href="assets/css/nav.css" rel="stylesheet" />
+  <link href="assets/css/footer.css" rel="stylesheet" />
+</head>
+
+<body>
+  <?php include 'components/nav.php'; ?>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div
+      id="heroCarousel"
+      class="carousel slide carousel-fade"
+      data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button
+          type="button"
+          data-bs-target="#heroCarousel"
+          data-bs-slide-to="0"
+          class="active"
+          aria-current="true"></button>
+        <button
+          type="button"
+          data-bs-target="#heroCarousel"
+          data-bs-slide-to="1"></button>
+        <button
+          type="button"
+          data-bs-target="#heroCarousel"
+          data-bs-slide-to="2"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img
+            src="assets/img/hero-1.jpg"
+            class="d-block w-100"
+            alt="Luxury Hotel" />
+          <div class="carousel-caption text-start">
+            <span class="caption-subtitle">Welcome to</span>
+            <h1 class="caption-title">DreamStay Hotel</h1>
+            <p class="caption-desc">
+              Where luxury meets comfort in the heart of paradise
+            </p>
+            <div class="caption-buttons">
+              <a href="#rooms" class="btn btn-primary me-3">View Our Rooms</a>
+              <a href="#book" class="btn btn-outline-light">Book Now</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img
+            src="assets/img/hero-2.jpg"
+            class="d-block w-100"
+            alt="Luxury Suite" />
+          <div class="carousel-caption text-start">
+            <span class="caption-subtitle">Experience</span>
+            <h1 class="caption-title">Ultimate Luxury</h1>
+            <p class="caption-desc">
+              Indulge in our world-class amenities and services
+            </p>
+            <div class="caption-buttons">
+              <a href="#amenities" class="btn btn-primary">Explore Amenities</a>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img
+            src="assets/img/hero-3.jpg"
+            class="d-block w-100"
+            alt="Special Offer" />
+          <div class="carousel-caption text-start">
+            <span class="caption-subtitle">Special Offer</span>
+            <h1 class="caption-title">Summer Paradise</h1>
+            <p class="caption-desc">
+              Get 20% off on all suite bookings this summer
+            </p>
+            <div class="caption-buttons">
+              <a href="#book" class="btn btn-primary">Book Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#heroCarousel"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#heroCarousel"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Rooms Section -->
+  <section class="py-5" id="rooms">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card room-card">
+            <img
+              src="assets/img/luxury-suite.jpg"
+              class="card-img-top"
+              alt="Luxury City View Suite" />
+            <div class="card-body">
+              <h5 class="card-title">Luxury City View Suite</h5>
+              <p class="card-text">
+                Experience the best of city living in our luxurious suites.
+              </p>
+              <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card room-card">
+            <img
+              src="assets/img/rustic-cabin.jpg"
+              class="card-img-top"
+              alt="Rustic Cabin Retreat" />
+            <div class="card-body">
+              <h5 class="card-title">Rustic Cabin Retreat</h5>
+              <p class="card-text">
+                Escape to nature in our cozy cabins, perfect for a relaxing
+                getaway.
+              </p>
+              <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card room-card">
+            <img
+              src="assets/img/beach-villa.jpg"
+              class="card-img-top"
+              alt="Exclusive Beach Villa" />
+            <div class="card-body">
+              <h5 class="card-title">Exclusive Beach Villa</h5>
+              <p class="card-text">
+                Indulge in a private beachfront experience with stunning ocean
+                views.
+              </p>
+              <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amenities Section -->
+  <section class="bg-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Featured Amenities</h2>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="amenity-card">
+            <img src="assets/img/pool.jpg" alt="Swimming Pool" class="mb-3" />
+            <h5>Swimming Pool</h5>
+            <p>Relax and unwind in our outdoor swimming pool</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="amenity-card">
+            <img src="assets/img/gym.jpg" alt="Fitness Center" class="mb-3" />
+            <h5>Fitness Center</h5>
+            <p>Stay active with our state-of-the-art fitness center</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="amenity-card">
+            <img src="assets/img/spa.jpg" alt="Spa & Wellness" class="mb-3" />
+            <h5>Spa & Wellness</h5>
+            <p>Rejuvenate your senses at our luxurious spa</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="amenity-card">
+            <img
+              src="assets/img/restaurant.jpg"
+              alt="Fine Dining"
+              class="mb-3" />
+            <h5>Fine Dining</h5>
+            <p>Savor exquisite cuisine at our fine restaurant</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Customer Reviews</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="d-flex align-items-center mb-3">
+              <img
+                src="assets/img/avatar1.jpg"
+                alt="Sophia Carter"
+                class="review-avatar me-3" />
+              <div>
+                <h5 class="mb-0">Sophia Carter</h5>
+                <small class="text-muted">May 18, 2024</small>
+              </div>
+            </div>
+            <div class="mb-2">★★★★★</div>
+            <p>
+              "Absolutely loved my stay! The room was spacious and clean, and
+              the staff were incredibly friendly and helpful. The location was
+              perfect, with easy access to all the main attractions. Highly
+              recommend!"
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="d-flex align-items-center mb-3">
+              <img
+                src="assets/img/avatar2.jpg"
+                alt="Ethan Walker"
+                class="review-avatar me-3" />
+              <div>
+                <h5 class="mb-0">Ethan Walker</h5>
+                <small class="text-muted">April 22, 2024</small>
+              </div>
+            </div>
+            <div class="mb-2">★★★★</div>
+            <p>
+              "Had a great experience overall. The hotel was well-maintained
+              and the amenities were top-notch. The only minor issue was the
+              noise level from the nearby street, but it didn't significantly
+              impact my stay."
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="review-card">
+            <div class="d-flex align-items-center mb-3">
+              <img
+                src="assets/img/avatar3.jpg"
+                alt="Olivia Hayes"
+                class="review-avatar me-3" />
+              <div>
+                <h5 class="mb-0">Olivia Hayes</h5>
+                <small class="text-muted">March 15, 2024</small>
+              </div>
+            </div>
+            <div class="mb-2">★★★★★</div>
+            <p>
+              "Fantastic hotel with excellent service. The staff went above
+              and beyond to make my stay comfortable. The room was beautifully
+              decorated and had all the necessary amenities. Will definitely
+              be back!"
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summer Offer Section -->
+  <section class="summer-offer">
+    <div class="container text-center">
+      <h2 class="mb-4">Exclusive Summer Offer</h2>
+      <p class="lead mb-4">
+        Book your stay now and get 20% off on all room types!
+      </p>
+      <p class="mb-4">Limited time offer!</p>
+      <a href="#" class="btn btn-primary btn-lg">Book Now</a>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="container text-center">
+      <h2 class="mb-4">Stay Updated</h2>
+      <p class="mb-4">
+        Sign up for our newsletter to receive exclusive offers and travel
+        tips.
+      </p>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="input-group mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Enter your email" />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> <?php include 'components/footer.php'; ?>
+  <!-- Custom JS -->
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>

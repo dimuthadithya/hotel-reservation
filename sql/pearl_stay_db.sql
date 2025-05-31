@@ -8,7 +8,6 @@ USE pearl_stay_db;
 -- 1. Users Table (Both customers and admins)
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -227,10 +226,10 @@ CREATE TABLE hotel_images (
 -- Insert Sample Data
 
 -- Insert sample admin user
-INSERT INTO users (username, first_name, last_name, email, password, user_role, permissions, account_status) VALUES
-('admin', 'System', 'Administrator', 'admin@pearlstay.lk', '$2y$10$example_hashed_password', 'super_admin', 
+INSERT INTO users (first_name, last_name, email, password, user_role, permissions, account_status) VALUES
+('System', 'Administrator', 'admin@pearlstay.lk', '$2y$10$example_hashed_password', 'super_admin', 
 '{"hotels": "full", "bookings": "full", "users": "full", "reviews": "full", "settings": "full"}', 'active'),
-('moderator', 'Review', 'Moderator', 'moderator@pearlstay.lk', '$2y$10$example_hashed_password', 'moderator', 
+('Review', 'Moderator', 'moderator@pearlstay.lk', '$2y$10$example_hashed_password', 'moderator', 
 '{"reviews": "moderate", "hotels": "view", "bookings": "view"}', 'active');
 
 -- Insert sample customer
