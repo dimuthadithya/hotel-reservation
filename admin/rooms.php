@@ -1,10 +1,31 @@
-<?php include_once 'includes/header.php'; ?>
-<?php include_once 'includes/sidebar.php'; ?>
+<?php
+include_once 'includes/header.php';
+include_once 'includes/sidebar.php';
+include_once '../config/db.php';
+
+// Get selected hotel ID from URL
+$selected_hotel_id = isset($_GET['hotel_id']) ? intval($_GET['hotel_id']) : null;
+
+// Get hotel details if hotel_id is provided
+$hotel_name = "";
+if ($selected_hotel_id) {
+    $hotel_sql = "SELECT hotel_name FROM hotels WHERE hotel_id = ?";
+    $hotel_stmt = $conn->prepare($hotel_sql);
+    $hotel_stmt->execute([$selected_hotel_id]);
+    $hotel = $hotel_stmt->fetch(PDO::FETCH_ASSOC);
+    $hotel_name = $hotel ? $hotel['hotel_name'] : "";
+}
+?>
 
 <!-- Main Content -->
 <div class="admin-main">
-    <div class="content-header">
-        <h2>Room Management</h2>
+    <div class="content-header mb-3">
+        <div>
+            <h2>Room Management</h2>
+            <?php if ($hotel_name): ?>
+                <p class="text-muted">Managing rooms for: <?= htmlspecialchars($hotel_name) ?></p>
+            <?php endif; ?>
+        </div>
         <div class="header-actions">
             <button
                 class="btn btn-primary"
@@ -20,16 +41,36 @@
             </button>
         </div>
     </div>
+
     <div class="room-filters mb-3">
         <div class="row g-3">
-            <div class="col-md-3">
-                <select class="form-select" id="hotelFilter">
-                    <option value="">All Hotels</option>
-                </select>
-            </div>
+            <?php if (!$selected_hotel_id): ?>
+                <div class="col-md-3">
+                    <select class="form-select" id="hotelFilter">
+                        <option value="">All Hotels</option>
+                        <?php
+                        $hotels_sql = "SELECT hotel_id, hotel_name FROM hotels WHERE status = 'active' ORDER BY hotel_name";
+                        $hotels_stmt = $conn->query($hotels_sql);
+                        while ($hotel = $hotels_stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<option value='{$hotel['hotel_id']}'>{$hotel['hotel_name']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            <?php endif; ?>
             <div class="col-md-3">
                 <select class="form-select" id="roomTypeFilter">
                     <option value="">All Room Types</option>
+                    <?php
+                    $type_sql = "SELECT room_type_id, type_name FROM room_types " .
+                        ($selected_hotel_id ? "WHERE hotel_id = ? " : "") .
+                        "ORDER BY type_name";
+                    $type_stmt = $conn->prepare($type_sql);
+                    $type_stmt->execute($selected_hotel_id ? [$selected_hotel_id] : []);
+                    while ($type = $type_stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<option value='{$type['room_type_id']}'>{$type['type_name']}</option>";
+                    }
+                    ?>
                 </select>
             </div>
             <div class="col-md-3">
@@ -43,9 +84,104 @@
             </div>
         </div>
     </div>
-    <div class="rooms-list">
-        <!-- Room items will be loaded dynamically -->
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Room Number</th>
+                    <?php if (!$selected_hotel_id): ?>
+                        <th>Hotel</th>
+                    <?php endif; ?>
+                    <th>Room Type</th>
+                    <th>Floor</th>
+                    <th>Status</th>
+                    <th width="150">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $sql = "SELECT r.*, h.hotel_name, rt.type_name 
+                        FROM rooms r 
+                        JOIN hotels h ON r.hotel_id = h.hotel_id 
+                        JOIN room_types rt ON r.room_type_id = rt.room_type_id
+                        WHERE 1=1 " .
+                    ($selected_hotel_id ? "AND r.hotel_id = ? " : "") .
+                    "ORDER BY r.created_at DESC";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($selected_hotel_id ? [$selected_hotel_id] : []);
+                $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (count($rooms) === 0): ?>
+                    <tr>
+                        <td colspan="<?= $selected_hotel_id ? '5' : '6' ?>" class="text-center">No rooms found.</td>
+                    </tr>
+                    <?php else:
+                    foreach ($rooms as $room): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($room['room_number']) ?></td>
+                            <?php if (!$selected_hotel_id): ?>
+                                <td><?= htmlspecialchars($room['hotel_name']) ?></td>
+                            <?php endif; ?>
+                            <td><?= htmlspecialchars($room['type_name']) ?></td>
+                            <td><?= htmlspecialchars($room['floor_number']) ?></td>
+                            <td>
+                                <span class="badge bg-<?=
+                                                        $room['status'] === 'available' ? 'success' : ($room['status'] === 'occupied' ? 'warning' : ($room['status'] === 'maintenance' ? 'info' : 'secondary'))
+                                                        ?>">
+                                    <?= ucfirst($room['status']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button onclick="editRoom(<?= $room['room_id'] ?>)" class="btn btn-warning btn-sm" title="Edit Room">
+                                        <i class="fas fa-edit fa-sm"></i>
+                                    </button>
+                                    <form action="handlers/delete_room.php" method="POST" style="display: inline;">
+                                        <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete Room">
+                                            <i class="fas fa-trash fa-sm"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                <?php endforeach;
+                endif; ?>
+            </tbody>
+        </table>
     </div>
+</div>
+
+<style>
+    .action-buttons {
+        display: flex;
+        gap: 4px;
+    }
+
+    .action-buttons .btn,
+    .action-buttons form .btn {
+        padding: 0.25rem;
+        font-size: 0.8rem;
+        line-height: 1;
+        border-radius: 0.2rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .action-buttons .fas {
+        font-size: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+    }
+</style>
 </div>
 
 <!-- Add Room Modal -->

@@ -36,15 +36,20 @@ $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= date('Y-m-d', strtotime($hotel['created_at'])) ?></td>
                         <td>
                             <div class="action-buttons">
-                                <button onclick="viewHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-info btn-sm">
+                                <button onclick="viewHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-info btn-sm" title="View">
                                     <i class="fas fa-eye fa-sm"></i>
                                 </button>
-                                <button onclick="editHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-warning btn-sm">
+                                <button onclick="editHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-warning btn-sm" title="Edit">
                                     <i class="fas fa-edit fa-sm"></i>
-                                </button>
+                                </button> <a href="manage_hotel_rooms.php?hotel_id=<?= $hotel['hotel_id'] ?>" class="btn btn-success btn-sm" title="Manage Rooms">
+                                    <i class="fas fa-bed fa-sm"></i>
+                                </a>
+                                <a href="room_types.php?hotel_id=<?= $hotel['hotel_id'] ?>" class="btn btn-primary btn-sm" title="Room Types">
+                                    <i class="fas fa-list fa-sm"></i>
+                                </a>
                                 <form action="handlers/delete_hotel.php" method="POST" style="display: inline;">
                                     <input type="hidden" name="hotel_id" value="<?= $hotel['hotel_id'] ?>">
-                                    <button type="submit" class="btn btn-danger btn-sm">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete">
                                         <i class="fas fa-trash fa-sm"></i>
                                     </button>
                                 </form>
