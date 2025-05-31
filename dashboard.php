@@ -1,5 +1,19 @@
 <?php
+require_once 'config/db.php';
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php');
+  exit();
+}
+
+$userId = $_SESSION['user_id'];
+
+$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = :id");
+$stmt->bindParam(':id', $userId);
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -67,11 +81,11 @@ session_start();
             </label>
           </div>
           <div class="profile-info">
-            <h2>Sarah Mitchell</h2>
-            <p class="text-muted mb-2">sarah.mitchell@example.com</p>
+            <h2><?php echo $user['first_name'] . ' ' . $user['last_name']; ?></h2>
+            <p class="text-muted mb-2"><?php echo $user['email']; ?></p>
             <div class="profile-status">
               <i class="fas fa-check-circle"></i>
-              <span>Verified Member since 2024</span>
+              <span>Verified Member since <?php echo $user['created_at']; ?></span>
             </div>
           </div>
         </div>
@@ -125,15 +139,16 @@ session_start();
         <div class="tab-pane fade show active" id="profile" role="tabpanel">
           <div class="content-card">
             <h3 class="mb-4">Personal Information</h3>
-            <form id="settingsForm">
+            <form id="settingsForm" action="./handlers/update_profile.php" method="POST">
               <div class="row g-3">
                 <div class="col-md-6">
                   <div class="form-floating">
                     <input
                       type="text"
                       class="form-control"
+                      name="first_name"
                       id="firstName"
-                      value="Sarah" />
+                      value="<?php echo $user['first_name']; ?>" />
                     <label for="firstName">First Name</label>
                   </div>
                 </div>
@@ -143,7 +158,8 @@ session_start();
                       type="text"
                       class="form-control"
                       id="lastName"
-                      value="Mitchell" />
+                      name="last_name"
+                      value="<?php echo $user['last_name']; ?>" />
                     <label for="lastName">Last Name</label>
                   </div>
                 </div>
@@ -153,7 +169,8 @@ session_start();
                       type="email"
                       class="form-control"
                       id="email"
-                      value="sarah.mitchell@example.com" />
+                      name="email"
+                      value="<?php echo $user['email']; ?>" />
                     <label for="email">Email Address</label>
                   </div>
                 </div>
@@ -163,22 +180,13 @@ session_start();
                       type="tel"
                       class="form-control"
                       id="phone"
-                      value="+1 234 567 8900" />
+                      name="phone"
+                      value="<?php echo $user['phone']; ?>" />
                     <label for="phone">Phone Number</label>
                   </div>
                 </div>
-                <div class="col-12">
-                  <div class="form-floating">
-                    <textarea
-                      class="form-control"
-                      id="bio"
-                      style="height: 100px">
-Passionate traveler, always seeking new adventures and experiences.</textarea>
-                    <label for="bio">Bio</label>
-                  </div>
-                </div>
               </div>
-              <button type="submit" class="btn btn-primary mt-4">
+              <button type="submit" name="update_profile" class="btn btn-primary mt-4">
                 Save Changes
               </button>
             </form>
@@ -309,7 +317,7 @@ Passionate traveler, always seeking new adventures and experiences.</textarea>
           <div class="content-card">
             <h3 class="mb-4">Account Settings</h3>
             <!-- Password Change Form -->
-            <form id="passwordForm" class="mb-5">
+            <form id="passwordForm" class="mb-5" action="./handlers/update_password.php" method="POST">
               <h5 class="mb-3">Change Password</h5>
               <div class="row g-3">
                 <div class="col-md-6">
@@ -318,6 +326,7 @@ Passionate traveler, always seeking new adventures and experiences.</textarea>
                       type="password"
                       class="form-control"
                       id="currentPassword"
+                      name="current_password"
                       required />
                     <label for="currentPassword">Current Password</label>
                   </div>
@@ -327,6 +336,7 @@ Passionate traveler, always seeking new adventures and experiences.</textarea>
                     <input
                       type="password"
                       class="form-control"
+                      name="new_password"
                       id="newPassword"
                       required />
                     <label for="newPassword">New Password</label>
@@ -337,50 +347,18 @@ Passionate traveler, always seeking new adventures and experiences.</textarea>
                     <input
                       type="password"
                       class="form-control"
+                      name="confirm_password"
                       id="confirmPassword"
                       required />
                     <label for="confirmPassword">Confirm New Password</label>
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary mt-3">
+              <button type="submit" name="update_password" class="btn btn-primary mt-3">
                 Update Password
               </button>
             </form>
 
-            <!-- Notification Settings -->
-            <h5 class="mb-3">Notification Settings</h5>
-            <div class="mb-4">
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="emailNotif"
-                  checked />
-                <label class="form-check-label" for="emailNotif">
-                  Email Notifications
-                </label>
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="smsNotif"
-                  checked />
-                <label class="form-check-label" for="smsNotif">
-                  SMS Notifications
-                </label>
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="promoNotif" />
-                <label class="form-check-label" for="promoNotif">
-                  Promotional Emails
-                </label>
-              </div>
-            </div>
 
             <!-- Danger Zone -->
             <div class="card bg-light">
