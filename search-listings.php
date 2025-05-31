@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -178,15 +180,38 @@ session_start();
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Hotel Listings -->
+      </div>      <!-- Hotel Listings -->
       <div class="col-lg-9">
-        <div class="results-count mb-4">
-          <h4>15 properties found in Kandy</h4>
-        </div>
         <?php
-        include 'components/hotelCard.php';
+        require_once 'config/db.php';
+        
+        // Fetch all active hotels from hotels table
+        $sql = "SELECT * FROM hotels WHERE status = 'active'";
+        $stmt = $conn->query($sql);
+        $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+        <div class="results-count mb-4">
+          <h4><?= count($hotels) ?> properties found</h4>
+        </div>
+        <?php        // Loop through each hotel and display the hotel card
+        foreach($hotels as $hotel) {
+            // Add dummy data for fields from other tables
+            $hotel['average_rating'] = rand(35, 50) / 10;  // Dummy rating between 3.5 and 5.0
+            
+            // Customize dummy amenities based on star rating
+            $dummyAmenities = ['Free WiFi', 'Parking', 'Restaurant', 'Air Conditioning'];
+            if ($hotel['star_rating'] >= 4) {
+                $dummyAmenities[] = 'Swimming Pool';
+                $dummyAmenities[] = 'Spa';
+            }
+            if ($hotel['star_rating'] >= 5) {
+                $dummyAmenities[] = 'Fitness Center';
+                $dummyAmenities[] = 'Room Service';
+            }
+            $hotel['amenities'] = json_encode($dummyAmenities);
+            
+            include 'components/hotelCard.php';
+        }
         ?>
       </div>
     </div>
