@@ -13,10 +13,8 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    profile_image VARCHAR(255),
-    -- Role-based system
-    user_role ENUM('customer', 'admin', 'super_admin', 'moderator', 'hotel_manager') DEFAULT 'customer',
-    permissions JSON,
+    profile_image VARCHAR(255),    -- Role-based system
+    role ENUM('admin', 'user') DEFAULT 'user',
     -- Account status and verification
     email_verified BOOLEAN DEFAULT FALSE,
     account_status ENUM('active', 'inactive', 'suspended', 'pending') DEFAULT 'active',
@@ -225,17 +223,10 @@ CREATE TABLE hotel_images (
 
 -- Insert Sample Data
 
--- Insert sample admin user
-INSERT INTO users (first_name, last_name, email, password, user_role, permissions, account_status) VALUES
-('System', 'Administrator', 'admin@pearlstay.lk', '$2y$10$example_hashed_password', 'super_admin', 
-'{"hotels": "full", "bookings": "full", "users": "full", "reviews": "full", "settings": "full"}', 'active'),
-('Review', 'Moderator', 'moderator@pearlstay.lk', '$2y$10$example_hashed_password', 'moderator', 
-'{"reviews": "moderate", "hotels": "view", "bookings": "view"}', 'active');
-
--- Insert sample customer
-INSERT INTO users (first_name, last_name, email, password, phone, user_role) VALUES
-('John', 'Doe', 'john.doe@email.com', '$2y$10$example_hashed_password', '+1234567890',  'customer'),
-('Jane', 'Smith', 'jane.smith@email.com', '$2y$10$example_hashed_password', '+9876543210', 'customer');
+-- Insert sample users with password '123' (hashed)
+INSERT INTO users (first_name, last_name, email, password, role, account_status) VALUES
+('Admin', 'User', 'admin@admin.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'admin', 'active'),
+('Regular', 'User', 'user@user.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'user', 'active');
 
 -- Insert sample locations
 INSERT INTO locations (location_name, district, province, is_popular) VALUES
@@ -277,7 +268,7 @@ CREATE INDEX idx_hotels_rating ON hotels(average_rating);
 CREATE INDEX idx_reviews_hotel ON reviews(hotel_id);
 CREATE INDEX idx_reviews_status ON reviews(review_status);
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(user_role);
+CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_status ON users(account_status);
 
 -- Show tables created
