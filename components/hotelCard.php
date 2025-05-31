@@ -1,6 +1,4 @@
       <?php
-        // filepath: c:\laragon\www\hotel-reservation\components\hotelCard.php
-
         /**
          * This component expects the following data in the $hotel array:
          * - hotel_id: The ID of the hotel
@@ -11,12 +9,17 @@
          * - base_price: Price per night (from room_types table, using minimum price)
          * - average_rating: Rating from hotels table
          * - total_reviews: Total reviews from hotels table
-         * - amenities: JSON string of amenities from hotel_amenities junction table
+         * - amenities: Array of amenities from hotel_amenities junction table
+         * - property_type: Type of property (hotel, resort, villa, etc.)
          */
 
         require_once __DIR__ . '/../includes/utility_functions.php';
-        ?>
-      <div class="hotel-card mb-4">
+        ?><div class="hotel-card mb-4"
+          data-property-type="<?= strtolower($hotel['property_type']) ?>"
+          data-star-rating="<?= intval($hotel['star_rating']) ?>"
+          data-rating="<?= floatval($hotel['average_rating']) ?>"
+          data-price="<?= floatval($minPrice) ?>"
+          data-amenities='<?= htmlspecialchars(json_encode($amenities), ENT_QUOTES, 'UTF-8') ?>'>
           <div class="row g-0">
               <div class="col-md-4">
                   <div class="hotel-image">
@@ -53,14 +56,11 @@
                           </div>
                       </div>
                       <div class="amenities">
-                          <?php
-                            $amenities = json_decode($hotel['amenities'], true);
-                            if (is_array($amenities)) {
+                          <?php if (!empty($amenities)):
                                 foreach (array_slice($amenities, 0, 4) as $amenity): ?>
                                   <span class="badge bg-light text-dark me-2"><?= htmlspecialchars($amenity) ?></span>
                           <?php endforeach;
-                            }
-                            ?>
+                            endif; ?>
                       </div>
                       <div class="mt-3 d-flex justify-content-between align-items-end">
                           <div>

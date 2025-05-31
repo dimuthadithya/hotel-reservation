@@ -74,10 +74,10 @@ session_start();
         </div>
         <div class="col-lg-4 text-end">
           <div class="d-flex justify-content-end gap-2"> <select class="form-select form-select-sm w-auto">
-              <option>Sort by: Recommended</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Guest Rating</option>
+              <option value="recommended">Sort by: Recommended</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Guest Rating</option>
             </select>
           </div>
         </div>
@@ -98,24 +98,23 @@ session_start();
               <span id="price-min"></span> - <span id="price-max"></span>
             </div>
           </div>
-
           <div class="filter-section">
             <h5 class="filter-title">Property Type</h5>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="hotel" />
-              <label class="form-check-label" for="hotel">Hotels</label>
+              <input class="form-check-input" type="checkbox" id="property-type-hotel" value="hotel" />
+              <label class="form-check-label" for="property-type-hotel">Hotels</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="villa" />
-              <label class="form-check-label" for="villa">Villas</label>
+              <input class="form-check-input" type="checkbox" id="property-type-villa" value="villa" />
+              <label class="form-check-label" for="property-type-villa">Villas</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="homestay" />
-              <label class="form-check-label" for="homestay">Homestays</label>
+              <input class="form-check-input" type="checkbox" id="property-type-homestay" value="homestay" />
+              <label class="form-check-label" for="property-type-homestay">Homestays</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="resort" />
-              <label class="form-check-label" for="resort">Resorts</label>
+              <input class="form-check-input" type="checkbox" id="property-type-resort" value="resort" />
+              <label class="form-check-label" for="property-type-resort">Resorts</label>
             </div>
           </div>
 
@@ -136,28 +135,27 @@ session_start();
               </button>
             </div>
           </div>
-
           <div class="filter-section">
             <h5 class="filter-title">Popular Amenities</h5>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="wifi" />
-              <label class="form-check-label" for="wifi">Free WiFi</label>
+              <input class="form-check-input" type="checkbox" id="amenity-wifi" value="wifi" />
+              <label class="form-check-label" for="amenity-wifi">Free WiFi</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="pool" />
-              <label class="form-check-label" for="pool">Swimming Pool</label>
+              <input class="form-check-input" type="checkbox" id="amenity-pool" value="pool" />
+              <label class="form-check-label" for="amenity-pool">Swimming Pool</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="beach" />
-              <label class="form-check-label" for="beach">Beach Access</label>
+              <input class="form-check-input" type="checkbox" id="amenity-beach" value="beach" />
+              <label class="form-check-label" for="amenity-beach">Beach Access</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="spa" />
-              <label class="form-check-label" for="spa">Spa</label>
+              <input class="form-check-input" type="checkbox" id="amenity-spa" value="spa" />
+              <label class="form-check-label" for="amenity-spa">Spa</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="ayurveda" />
-              <label class="form-check-label" for="ayurveda">Ayurveda Center</label>
+              <input class="form-check-input" type="checkbox" id="amenity-ayurveda" value="ayurveda" />
+              <label class="form-check-label" for="amenity-ayurveda">Ayurveda Center</label>
             </div>
           </div>
 
