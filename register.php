@@ -147,41 +147,10 @@ session_start();
           <div class="invalid-feedback">Passwords do not match</div>
         </div>
 
-        <div class="form-check mb-2">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="terms"
-            required />
-          <label
-            class="form-check-label"
-            for="terms"
-            style="font-size: 0.75rem; line-height: 1.3">
-            I agree to the <a href="#">Terms of Service</a> and
-            <a href="#">Privacy Policy</a>
-          </label>
-          <div class="invalid-feedback" style="font-size: 0.75rem">
-            You must agree to the terms to continue
-          </div>
-        </div>
-
         <button type="submit" class="btn auth-btn">Create Account</button>
       </form>
 
-      <div class="social-auth">
-        <p>Or register with</p>
-        <div class="social-buttons">
-          <a href="#" class="social-btn">
-            <i class="fab fa-google"></i>
-          </a>
-          <a href="#" class="social-btn">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#" class="social-btn">
-            <i class="fab fa-twitter"></i>
-          </a>
-        </div>
-      </div>
+
 
       <div class="auth-links">
         <p>Already have an account? <a href="login.php">Sign In</a></p>

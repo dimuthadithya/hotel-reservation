@@ -81,34 +81,12 @@ session_start();
           </button>
           <div class="invalid-feedback">Please enter your password</div>
         </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember_me" />
-            <label class="form-check-label" for="rememberMe">Remember me</label>
-          </div>
-          <a href="#" class="forgot-password">Forgot password?</a>
-        </div>
-
-        <button type="submit" class="btn auth-btn">
+        <button type="submit" name="login" class="btn auth-btn">
           Sign In
         </button>
       </form>
 
-      <div class="social-auth">
-        <p>Or sign in with</p>
-        <div class="social-buttons">
-          <a href="#" class="social-btn">
-            <i class="fab fa-google"></i>
-          </a>
-          <a href="#" class="social-btn">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#" class="social-btn">
-            <i class="fab fa-twitter"></i>
-          </a>
-        </div>
-      </div>
+
 
       <div class="auth-links">
         <p>Don't have an account? <a href="register.php">Create Account</a></p>

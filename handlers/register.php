@@ -2,12 +2,12 @@
 require_once '../config/db.php';
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $first_name = $_POST['first_name'] ?? '';
-    $last_name = $_POST['last_name'] ?? '';
-    $email = $_POST['email'] ?? '';
+if (isset($_POST['register']) && $_POST['first_name'] && $_POST['last_name'] && $_POST['email'] && $_POST['password']) {
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
     $password = password_hash($_POST['password'] ?? '', PASSWORD_DEFAULT);
-    $phone = $_POST['phone'] ?? '';
+    $phone = $_POST['phone'];
 
     $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, phone)
             VALUES (:first_name, :last_name, :email, :password, :phone)");
