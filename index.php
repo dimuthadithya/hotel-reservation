@@ -62,8 +62,7 @@ session_start();
               Where luxury meets comfort in the heart of paradise
             </p>
             <div class="caption-buttons">
-              <a href="#rooms" class="btn btn-primary me-3">View Our Rooms</a>
-              <a href="#book" class="btn btn-outline-light">Book Now</a>
+              <a href="./search-listings.php" class="btn btn-primary me-3">View Our Hotels</a>
             </div>
           </div>
         </div>
@@ -303,6 +302,7 @@ session_start();
       </div>
     </div>
   </section> <?php include 'components/footer.php'; ?>
+
   <!-- Custom JS -->
   <script src="assets/js/main.js"></script>
 </body>

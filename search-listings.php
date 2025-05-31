@@ -73,16 +73,12 @@ session_start();
           </div>
         </div>
         <div class="col-lg-4 text-end">
-          <div class="d-flex justify-content-end gap-2">
-            <select class="form-select form-select-sm w-auto">
+          <div class="d-flex justify-content-end gap-2"> <select class="form-select form-select-sm w-auto">
               <option>Sort by: Recommended</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
               <option>Guest Rating</option>
             </select>
-            <button class="btn btn-sm btn-outline-primary">
-              <i class="fas fa-map-marked-alt"></i> Map View
-            </button>
           </div>
         </div>
       </div>

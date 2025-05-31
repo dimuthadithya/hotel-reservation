@@ -147,9 +147,9 @@ session_start();
           <div class="team-card text-center p-3">
             <div class="team-image mb-3">
               <img
-                src="assets/img/team/team1.jpg"
-                alt="Team Member"
-                class="rounded-circle" />
+                src="https://xsgames.co/randomusers/assets/avatars/female/1.jpg"
+                alt="Sarah Mitchell - CEO"
+                class="rounded-circle team-img" />
             </div>
             <h5>Sarah Mitchell</h5>
             <p class="text-muted">Founder & CEO</p>
@@ -163,9 +163,9 @@ session_start();
           <div class="team-card text-center p-3">
             <div class="team-image mb-3">
               <img
-                src="assets/img/team/team2.jpg"
-                alt="Team Member"
-                class="rounded-circle" />
+                src="https://xsgames.co/randomusers/assets/avatars/male/1.jpg"
+                alt="Raj Kumar - Operations Director"
+                class="rounded-circle team-img" />
             </div>
             <h5>Raj Kumar</h5>
             <p class="text-muted">Operations Director</p>
@@ -179,9 +179,9 @@ session_start();
           <div class="team-card text-center p-3">
             <div class="team-image mb-3">
               <img
-                src="assets/img/team/team3.jpg"
-                alt="Team Member"
-                class="rounded-circle" />
+                src="https://xsgames.co/randomusers/assets/avatars/female/2.jpg"
+                alt="Maya Perera - Sustainability Lead"
+                class="rounded-circle team-img" />
             </div>
             <h5>Maya Perera</h5>
             <p class="text-muted">Sustainability Lead</p>
@@ -195,9 +195,9 @@ session_start();
           <div class="team-card text-center p-3">
             <div class="team-image mb-3">
               <img
-                src="assets/img/team/team4.jpg"
-                alt="Team Member"
-                class="rounded-circle" />
+                src="https://xsgames.co/randomusers/assets/avatars/male/2.jpg"
+                alt="Tom Wilson - Technology Director"
+                class="rounded-circle team-img" />
             </div>
             <h5>Tom Wilson</h5>
             <p class="text-muted">Technology Director</p>
