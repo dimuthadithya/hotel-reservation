@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
-        echo "New record created successfully";
+        header('Location: ../login.php');
+        exit;
     } else {
         echo "Error: " . $stmt->errorInfo()[2];
     }
