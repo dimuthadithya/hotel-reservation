@@ -24,10 +24,19 @@ $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td colspan="9" class="text-center">No hotels found.</td>
                 </tr>
             <?php else: ?>
-                <?php foreach ($hotels as $i => $hotel): ?>
-                    <tr>
+                <?php foreach ($hotels as $i => $hotel): ?> <tr>
                         <td><?= $i + 1 ?></td>
-                        <td><?= htmlspecialchars($hotel['hotel_name']) ?></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img
+                                    src="<?= !empty($hotel['main_image']) ? '../uploads/img/hotels/' . $hotel['hotel_id'] . '/' . $hotel['main_image'] : '../admin/img/placeholder-hotel.jpg' ?>"
+                                    alt="<?= htmlspecialchars($hotel['hotel_name'] ?? 'Hotel Image') ?>"
+                                    class="hotel-thumb me-2"
+                                    onerror="this.onerror=null; this.src='../admin/img/placeholder-hotel.jpg';"
+                                    style="width: 50px; height: 50px; object-fit: cover;">
+                                <?= htmlspecialchars($hotel['hotel_name']) ?>
+                            </div>
+                        </td>
                         <td><?= htmlspecialchars(ucfirst($hotel['property_type'])) ?></td>
                         <td><?= htmlspecialchars($hotel['district']) ?></td>
                         <td><?= htmlspecialchars($hotel['province']) ?></td>
@@ -94,5 +103,13 @@ $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .badge {
         padding: 0.35em 0.65em;
         font-size: 0.75em;
+    }
+
+    .hotel-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
     }
 </style>

@@ -39,6 +39,18 @@
                     </div>
 
                     <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Main Image</label>
+                            <input type="file" class="form-control" name="main_image" accept="image/*" required onchange="previewImage(this, 'mainImagePreview')" />
+                            <div class="form-text">Recommended size: 1200x800 pixels, max 2MB</div>
+                        </div>
+                        <div class="col-md-4">
+                            <img id="mainImagePreview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                                class="img-thumbnail mt-2" style="width: 100%; height: 150px; object-fit: cover;" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="form-label">Description</label>
                             <textarea class="form-control" name="description" rows="3" required></textarea>
@@ -122,15 +134,14 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button
+            <div class="modal-footer"> <button
                     type="button"
                     class="btn btn-secondary"
                     data-bs-dismiss="modal">
                     Cancel
                 </button>
-                <button type="submit" name="add_hotel" class="btn btn-primary" form="addHotelForm">
-                    Add Hotel
+                <button type="submit" class="btn btn-primary" form="addHotelForm">
+                    <i class="fas fa-plus"></i> Add Hotel
                 </button>
             </div>
         </div>
@@ -157,12 +168,23 @@
 
                 <div class="tab-content" id="hotelTabsContent">
                     <div class="tab-pane fade show active" id="details" role="tabpanel">
-                        <form id="editHotelForm" method="POST" action="handlers/update_hotel.php">
+                        <form id="editHotelForm" method="POST" action="handlers/update_hotel.php" enctype="multipart/form-data">
                             <input type="hidden" name="hotel_id" id="edit_hotel_id" />
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label class="form-label">Hotel Name</label>
                                     <input type="text" class="form-control" name="hotel_name" id="edit_hotel_name" required />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label class="form-label">Main Image</label>
+                                    <input type="file" class="form-control" name="main_image" accept="image/*" onchange="previewImage(this, 'editImagePreview')" />
+                                    <div class="form-text">Leave empty to keep current image. Recommended size: 1200x800 pixels, max 2MB</div>
+                                    <input type="hidden" name="current_image" id="edit_current_image" />
+                                </div>
+                                <div class="col-md-4">
+                                    <img id="editImagePreview" src="" class="img-thumbnail mt-2" style="width: 100%; height: 150px; object-fit: cover; border: 1px solid #dee2e6;" />
                                 </div>
                             </div>
 
@@ -305,6 +327,14 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" form="editHotelForm">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -329,54 +359,20 @@
                     document.getElementById('edit_star_rating').value = hotel.star_rating;
                     document.getElementById('edit_property_type').value = hotel.property_type;
                     document.getElementById('edit_contact_phone').value = hotel.contact_phone;
-
-                    // Fetch and set hotel amenities
-                    fetch(`handlers/get_hotel_amenities.php?id=${hotel.hotel_id}`)
-                        .then(response => response.json())
-                        .then(amenityData => {
-                            if (amenityData.status === 'success') {
-                                // Reset all checkboxes first
-                                document.querySelectorAll('#hotelAmenitiesForm input[type="checkbox"]').forEach(checkbox => {
-                                    checkbox.checked = false;
-                                });
-
-                                // Check the boxes for assigned amenities
-                                amenityData.data.forEach(amenityId => {
-                                    const checkbox = document.querySelector(`#hotelAmenitiesForm input[value="${amenityId}"]`);
-                                    if (checkbox) {
-                                        checkbox.checked = true;
-                                    }
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error loading hotel amenities');
-                        });
                     document.getElementById('edit_contact_email').value = hotel.contact_email;
                     document.getElementById('edit_website_url').value = hotel.website_url;
                     document.getElementById('edit_total_rooms').value = hotel.total_rooms;
                     document.getElementById('edit_status').value = hotel.status;
 
-                    // Fetch and check hotel amenities
-                    fetch(`handlers/get_hotel_amenities.php?hotel_id=${hotelId}`)
-                        .then(response => response.json())
-                        .then(amenityData => {
-                            if (amenityData.status === 'success') {
-                                // Uncheck all checkboxes first
-                                document.querySelectorAll('[name="amenities[]"]').forEach(checkbox => {
-                                    checkbox.checked = false;
-                                });
+                    // Update image preview
+                    const previewImage = document.getElementById('editImagePreview');
+                    if (hotel.main_image) {
+                        previewImage.src = `../uploads/img/hotels/${hotel.hotel_id}/${hotel.main_image}`;
+                    } else {
+                        previewImage.src = '../admin/img/placeholder-hotel.jpg';
+                    }
 
-                                // Check the boxes for amenities that the hotel has
-                                amenityData.amenities.forEach(amenityId => {
-                                    const checkbox = document.querySelector(`[name="amenities[]"][value="${amenityId}"]`);
-                                    if (checkbox) checkbox.checked = true;
-                                });
-                            }
-                        });
-
-                    // Show the modal
+                    // Show the modal with footer buttons
                     const editModal = new bootstrap.Modal(document.getElementById('editHotelModal'));
                     editModal.show();
                 } else {

@@ -69,54 +69,7 @@ $hotel['amenities'] = $dummyAmenities;
         <i class="fas fa-vr-cardboard me-2"></i>Virtual Tour
       </a>
     </div>
-    <div class="gallery-thumbnails">
-      <div class="container">
-        <div class="thumbnail-container">
-          <div class="row g-2">
-            <?php
-            // Get hotel images
-            $imagesQuery = "SELECT * FROM hotel_images WHERE hotel_id = :hotel_id AND status = 'active' ORDER BY sort_order LIMIT 4";
-            $imagesStmt = $conn->prepare($imagesQuery);
-            $imagesStmt->execute(['hotel_id' => $hotel_id]);
-            $images = $imagesStmt->fetchAll(PDO::FETCH_ASSOC);            // Display images from database
-            foreach ($images as $index => $image): ?>
-              <div class="col">
-                <img
-                  src="uploads/img/hotels/<?= $hotel['hotel_id'] ?>/<?= htmlspecialchars($image['image_url']) ?>"
-                  class="gallery-thumb <?= $index === 0 ? 'active' : '' ?> w-100"
-                  data-full-img="uploads/img/hotels/<?= $hotel['hotel_id'] ?>/<?= htmlspecialchars($image['image_url']) ?>"
-                  alt="<?= htmlspecialchars($image['image_title'] ?? $hotel['hotel_name']) ?>" />
-              </div>
-              <?php endforeach;
 
-            // Add remaining image slots with defaults if needed
-            if (count($images) < 4):
-              $defaultImages = [
-                ['src' => 'assets/img/pool.jpg', 'alt' => 'Pool'],
-                ['src' => 'assets/img/restaurant.jpg', 'alt' => 'Restaurant'],
-                ['src' => 'assets/img/spa.jpg', 'alt' => 'Spa']
-              ];
-
-              foreach (array_slice($defaultImages, 0, 4 - count($images)) as $img): ?>
-                <div class="col">
-                  <img
-                    src="<?= $img['src'] ?>"
-                    class="gallery-thumb w-100"
-                    data-full-img="<?= $img['src'] ?>"
-                    alt="<?= $img['alt'] ?>" />
-                </div>
-            <?php endforeach;
-            endif; ?>
-
-            <div class="col">
-              <button class="btn btn-outline-primary w-100 h-100">
-                +12 More
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- Hotel Info Section -->

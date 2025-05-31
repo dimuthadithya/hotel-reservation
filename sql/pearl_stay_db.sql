@@ -37,9 +37,9 @@ CREATE TABLE hotels (
     star_rating ENUM('1', '2', '3', '4', '5'),    contact_phone VARCHAR(20),
     contact_email VARCHAR(100),
     website_url VARCHAR(255),
-    total_rooms INT DEFAULT 0,
-    property_type ENUM('hotel', 'resort', 'villa', 'homestay', 'guesthouse', 'boutique') DEFAULT 'hotel',
+    total_rooms INT DEFAULT 0,    property_type ENUM('hotel', 'resort', 'villa', 'homestay', 'guesthouse', 'boutique') DEFAULT 'hotel',
     status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
+    main_image VARCHAR(255) DEFAULT NULL,
     average_rating DECIMAL(3, 2) DEFAULT 0.00,
     total_reviews INT DEFAULT 0,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
