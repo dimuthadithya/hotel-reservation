@@ -30,10 +30,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                 <li class="nav-item">
                     <a class="nav-link <?php echo $currentPage === 'contact' ? 'active' : ''; ?>" href="contact.php">Contact</a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="login.php">Login</a>
-                </li>
+                <?php if (!isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="login.php">Login</a>
+                    </li>
+                <?php endif; ?>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="dashboard.php">My Account</a>

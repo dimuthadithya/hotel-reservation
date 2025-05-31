@@ -27,28 +27,13 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 3. Locations/Destinations Table
-CREATE TABLE locations (
-    location_id INT PRIMARY KEY AUTO_INCREMENT,
-    location_name VARCHAR(100) NOT NULL,
-    district VARCHAR(50),
-    province VARCHAR(50),
-    country VARCHAR(50) DEFAULT 'Sri Lanka',
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    description TEXT,
-    is_popular BOOLEAN DEFAULT FALSE,
-    image_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. Hotels Table
+-- 3. Hotels Table
 CREATE TABLE hotels (
-    hotel_id INT PRIMARY KEY AUTO_INCREMENT,
-    hotel_name VARCHAR(150) NOT NULL,
+    hotel_id INT PRIMARY KEY AUTO_INCREMENT,    hotel_name VARCHAR(150) NOT NULL,
     description TEXT,
     address TEXT NOT NULL,
-    location_id INT,
+    district VARCHAR(50),
+    province VARCHAR(50),
     star_rating ENUM('1', '2', '3', '4', '5'),
     contact_phone VARCHAR(20),
     contact_email VARCHAR(100),
@@ -63,10 +48,8 @@ CREATE TABLE hotels (
     status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
     featured BOOLEAN DEFAULT FALSE,
     average_rating DECIMAL(3, 2) DEFAULT 0.00,
-    total_reviews INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+    total_reviews INT DEFAULT 0,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 5. Hotel Amenities Table
@@ -228,19 +211,6 @@ INSERT INTO users (first_name, last_name, email, password, role, account_status)
 ('Admin', 'User', 'admin@admin.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'admin', 'active'),
 ('Regular', 'User', 'user@user.com', '$2y$10$OfIxZEqScm64GFz/mGtDL.QUZHZdGGf2iAh9soZKmJbsRfYypQLpu', 'user', 'active');
 
--- Insert sample locations
-INSERT INTO locations (location_name, district, province, is_popular) VALUES
-('Colombo', 'Colombo', 'Western Province', TRUE),
-('Kandy', 'Kandy', 'Central Province', TRUE),
-('Galle', 'Galle', 'Southern Province', TRUE),
-('Ella', 'Badulla', 'Uva Province', TRUE),
-('Nuwara Eliya', 'Nuwara Eliya', 'Central Province', TRUE),
-('Sigiriya', 'Matale', 'Central Province', TRUE),
-('Anuradhapura', 'Anuradhapura', 'North Central Province', TRUE),
-('Bentota', 'Galle', 'Southern Province', TRUE),
-('Mirissa', 'Matara', 'Southern Province', TRUE),
-('Trincomalee', 'Trincomalee', 'Eastern Province', TRUE);
-
 -- Insert sample amenities
 INSERT INTO amenities (amenity_name, category, icon_class) VALUES
 ('Free WiFi', 'basic', 'fa-wifi'),
@@ -263,7 +233,6 @@ INSERT INTO amenities (amenity_name, category, icon_class) VALUES
 CREATE INDEX idx_bookings_dates ON bookings(check_in_date, check_out_date);
 CREATE INDEX idx_bookings_status ON bookings(booking_status);
 CREATE INDEX idx_bookings_user ON bookings(user_id);
-CREATE INDEX idx_hotels_location ON hotels(location_id);
 CREATE INDEX idx_hotels_rating ON hotels(average_rating);
 CREATE INDEX idx_reviews_hotel ON reviews(hotel_id);
 CREATE INDEX idx_reviews_status ON reviews(review_status);
