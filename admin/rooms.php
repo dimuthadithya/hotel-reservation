@@ -327,28 +327,8 @@ if ($selected_hotel_id) {
             return;
         }
 
-        const formData = new FormData(this);
-
-        fetch('handlers/edit_room.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    showAlert('success', 'Room updated successfully');
-                    // Close the modal
-                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editRoomModal'));
-                    editModal.hide();
-                    // Refresh the room list
-                    location.reload();
-                } else {
-                    showAlert('danger', 'Error updating room: ' + data.message);
-                }
-            })
-            .catch(error => {
-                showAlert('danger', 'Error updating room: ' + error.message);
-            });
+        const formData = new FormData(this);        // Submit the form directly - no need for fetch
+        this.submit();
     });
 </script>
 

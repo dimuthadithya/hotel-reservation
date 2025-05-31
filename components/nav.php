@@ -35,17 +35,17 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                         <a class="nav-link <?php echo $currentPage === 'login' ? 'active' : ''; ?>" href="login.php">Login</a>
                     </li>
                 <?php endif; ?>
+                <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $currentPage === 'admin' ? 'active' : ''; ?>" href="admin/index.php">Admin</a>
+                    </li>
+                <?php endif; ?>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>" href="dashboard.php">My Account</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="handlers/logout.php">Logout</a>
-                    </li>
-                <?php endif; ?>
-                <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin'): ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo $currentPage === 'admin' ? 'active' : ''; ?>" href="admin/index.php">Admin</a>
                     </li>
                 <?php endif; ?>
                 <li class="nav-item">

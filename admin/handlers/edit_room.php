@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
+    http_response_code(403);
     exit;
 }
 
@@ -15,7 +15,7 @@ if (
     !isset($_POST['room_id']) || !isset($_POST['room_type_id']) || !isset($_POST['room_number']) ||
     !isset($_POST['floor_number']) || !isset($_POST['status'])
 ) {
-    echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
+    http_response_code(400);
     exit;
 }
 
@@ -85,7 +85,9 @@ try {
         if ($booking_stmt->fetchColumn() > 0) {
             throw new Exception("Cannot change status: Room has active bookings");
         }
-    }    // Update room details
+    }
+
+    // Update room details
     $sql = "UPDATE rooms SET 
             room_type_id = ?, 
             room_number = ?, 
@@ -100,15 +102,16 @@ try {
         $floor_number,
         $status,
         $room_id
-    ]);
-
-    // Commit transaction
+    ]);    // Commit transaction
     $conn->commit();
-    echo json_encode(['status' => 'success', 'message' => 'Room updated successfully']);
+    header('Location: ../rooms.php');
+    exit;
 } catch (Exception $e) {
     // Rollback transaction on error
     if ($conn->inTransaction()) {
         $conn->rollBack();
     }
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    $_SESSION['error'] = $e->getMessage();
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    exit;
 }
