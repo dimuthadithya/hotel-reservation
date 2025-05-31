@@ -27,7 +27,7 @@ try {
     $bed_type = trim($_POST['bed_type']);
     $total_rooms = intval($_POST['total_rooms']);
     $status = $_POST['status'];
-    
+
     // Process amenities
     $amenities = isset($_POST['amenities']) ? $_POST['amenities'] : [];
     $amenities_json = json_encode($amenities);
@@ -36,7 +36,7 @@ try {
     $check_sql = "SELECT room_type_id FROM room_types WHERE hotel_id = ? AND type_name = ?";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->execute([$hotel_id, $type_name]);
-    
+
     if ($check_stmt->rowCount() > 0) {
         $_SESSION['error'] = 'Room type name already exists in this hotel.';
         header('Location: ' . $_SERVER['HTTP_REFERER']);
@@ -47,7 +47,7 @@ try {
     $images = [];
     if (isset($_FILES['room_images']) && !empty($_FILES['room_images']['name'][0])) {
         $upload_path = "../../uploads/img/room_types/" . $hotel_id . "/";
-        
+
         // Create upload directory if it doesn't exist
         if (!file_exists($upload_path)) {
             mkdir($upload_path, 0777, true);
@@ -62,7 +62,7 @@ try {
                 $tmp_name = $_FILES['room_images']['tmp_name'][$i];
                 $name = $_FILES['room_images']['name'][$i];
                 $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-                
+
                 // Validate file type
                 $allowed_types = ['jpg', 'jpeg', 'png', 'webp'];
                 if (!in_array($extension, $allowed_types)) {
@@ -88,15 +88,23 @@ try {
                 ?, ?, ?, ?, ?, 
                 ?, ?, ?, ?, ?, ?
             )";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->execute([
-        $hotel_id, $type_name, $description, $max_occupancy, $base_price,
-        $room_size, $bed_type, $total_rooms, $amenities_json, json_encode($images), $status
+        $hotel_id,
+        $type_name,
+        $description,
+        $max_occupancy,
+        $base_price,
+        $room_size,
+        $bed_type,
+        $total_rooms,
+        $amenities_json,
+        json_encode($images),
+        $status
     ]);
 
     $_SESSION['success'] = 'Room type added successfully.';
-    
 } catch (PDOException $e) {
     $_SESSION['error'] = 'Error adding room type. Please try again.';
     error_log($e->getMessage());

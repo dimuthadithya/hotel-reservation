@@ -14,9 +14,16 @@ $hotel = $hotel_stmt->fetch(PDO::FETCH_ASSOC);
 
 // Redirect if hotel not found
 if (!$hotel) {
+    $_SESSION['error'] = "Hotel not found.";
     header('Location: hotels.php');
     exit;
 }
+
+// Fetch room types for this hotel
+$types_sql = "SELECT * FROM room_types WHERE hotel_id = ? AND status = 'active' ORDER BY type_name";
+$types_stmt = $conn->prepare($types_sql);
+$types_stmt->execute([$hotel_id]);
+$room_types = $types_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!-- Main Content -->
@@ -38,17 +45,18 @@ if (!$hotel) {
                 <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
 
                 <div class="col-md-6">
-                    <label class="form-label">Room Type</label>
-                    <select class="form-select" name="room_type_id" required>
+                    <label class="form-label">Room Type</label> <select class="form-select" name="room_type_id" required>
                         <option value="">Select Room Type</option>
-                        <?php
-                        $types_sql = "SELECT * FROM room_types WHERE hotel_id = ? AND status = 'active'";
-                        $types_stmt = $conn->prepare($types_sql);
-                        $types_stmt->execute([$hotel_id]);
-                        while ($type = $types_stmt->fetch(PDO::FETCH_ASSOC)) {
-                            echo "<option value='{$type['room_type_id']}'>{$type['type_name']}</option>";
-                        }
-                        ?>
+                        <?php if (empty($room_types)): ?>
+                            <option value="" disabled>No room types available. Please add room types first.</option>
+                        <?php else: ?>
+                            <?php foreach ($room_types as $type): ?>
+                                <option value="<?= $type['room_type_id'] ?>">
+                                    <?= htmlspecialchars($type['type_name']) ?>
+                                    (<?= htmlspecialchars($type['bed_type']) ?>, Max: <?= $type['max_occupancy'] ?> guests)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
                 </div>
 
