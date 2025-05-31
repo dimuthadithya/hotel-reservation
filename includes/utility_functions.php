@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Utility functions for the hotel reservation system
  */
 
 if (!function_exists('getRatingText')) {
-    function getRatingText($rating) {
+    function getRatingText($rating)
+    {
         if ($rating >= 9) return 'Excellent';
         if ($rating >= 8) return 'Very Good';
         if ($rating >= 7) return 'Good';
@@ -12,4 +14,3 @@ if (!function_exists('getRatingText')) {
         return 'Basic';
     }
 }
-?>
