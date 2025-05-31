@@ -36,9 +36,11 @@ $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= date('Y-m-d', strtotime($hotel['created_at'])) ?></td>
                         <td>
                             <div class="action-buttons">
-                                <button onclick="viewHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-info btn-sm" title="View">
-                                    <i class="fas fa-eye fa-sm"></i>
-                                </button>
+                                <a href="../hotel-details.php?id=<?= $hotel['hotel_id'] ?>" target="_blank" class="text-bold">
+                                    <button class="btn btn-info btn-sm" title="View">
+                                        <i class="fas fa-eye fa-sm "></i>
+                                    </button>
+                                </a>
                                 <button onclick="editHotel(<?= $hotel['hotel_id'] ?>)" class="btn btn-warning btn-sm" title="Edit">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </button> <a href="manage_hotel_rooms.php?hotel_id=<?= $hotel['hotel_id'] ?>" class="btn btn-success btn-sm" title="Manage Rooms">
