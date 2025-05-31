@@ -50,23 +50,45 @@ session_start();
         <p>Sign in to your Pearl Stay account</p>
       </div>
 
+      <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+          <?php
+          echo $_SESSION['success'];
+          unset($_SESSION['success']);
+          ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if (isset($_SESSION['login_errors'])): ?>
+        <div class="alert alert-danger">
+          <ul class="mb-0" style="font-size: 0.9rem;">
+            <?php
+            foreach ($_SESSION['login_errors'] as $error) {
+              echo "<li>$error</li>";
+            }
+            unset($_SESSION['login_errors']);
+            ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
       <form id="loginForm" novalidate action="./handlers/login.php" method="POST">
         <div class="form-floating">
           <input
             type="email"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['form_data']['email_error']) ? 'is-invalid' : ''; ?>"
             id="email"
             name="email"
             placeholder="Email address"
+            value="<?php echo htmlspecialchars($_SESSION['form_data']['email'] ?? ''); ?>"
             required />
           <label for="email">Email address</label>
           <div class="invalid-feedback">Please enter a valid email address</div>
         </div>
-
         <div class="form-floating position-relative">
           <input
             type="password"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['form_data']['password_error']) ? 'is-invalid' : ''; ?>"
             id="password"
             name="password"
             placeholder="Password"
@@ -79,7 +101,9 @@ session_start();
             tabindex="-1">
             <i class="fas fa-eye"></i>
           </button>
-          <div class="invalid-feedback">Please enter your password</div>
+          <div class="invalid-feedback">
+            <?php echo $_SESSION['form_data']['password_error'] ?? 'Please enter your password'; ?>
+          </div>
         </div>
         <button type="submit" name="login" class="btn auth-btn">
           Sign In

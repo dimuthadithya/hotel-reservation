@@ -49,6 +49,19 @@ session_start();
         <p>Join us to discover authentic Sri Lankan stays</p>
       </div>
 
+      <?php if (isset($_SESSION['register_errors']) && !empty($_SESSION['register_errors'])): ?>
+        <div class="alert alert-danger">
+          <ul class="mb-0" style="font-size: 0.9rem;">
+            <?php
+            foreach ($_SESSION['register_errors'] as $error) {
+              echo "<li>$error</li>";
+            }
+            unset($_SESSION['register_errors']);
+            ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
       <form
         id="registerForm"
         novalidate
@@ -56,65 +69,69 @@ session_start();
         method="POST">
         <div class="row g-2">
           <div class="col-md-6">
-            <div class="form-floating">
-              <input
+            <div class="form-floating"> <input
                 type="text"
-                class="form-control"
+                class="form-control <?php echo isset($_SESSION['register_errors']['first_name']) ? 'is-invalid' : ''; ?>"
                 id="firstName"
                 name="first_name"
                 placeholder="First Name"
+                value="<?php echo htmlspecialchars($_SESSION['register_form_data']['first_name'] ?? ''); ?>"
                 required />
               <label for="firstName">First Name</label>
               <div class="invalid-feedback" style="font-size: 0.75rem">
-                Please enter your first name
+                <?php echo $_SESSION['register_errors']['first_name'] ?? 'Please enter your first name'; ?>
               </div>
             </div>
           </div>
           <div class="col-md-6">
-            <div class="form-floating">
-              <input
+            <div class="form-floating"> <input
                 type="text"
-                class="form-control"
+                class="form-control <?php echo isset($_SESSION['register_errors']['last_name']) ? 'is-invalid' : ''; ?>"
                 id="lastName"
                 name="last_name"
                 placeholder="Last Name"
+                value="<?php echo htmlspecialchars($_SESSION['register_form_data']['last_name'] ?? ''); ?>"
                 required />
               <label for="lastName">Last Name</label>
               <div class="invalid-feedback" style="font-size: 0.75rem">
-                Please enter your last name
+                <?php echo $_SESSION['register_errors']['last_name'] ?? 'Please enter your last name'; ?>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="form-floating">
-          <input
+        <div class="form-floating"> <input
             type="email"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['register_errors']['email']) ? 'is-invalid' : ''; ?>"
             id="email"
             name="email"
             placeholder="Email address"
+            value="<?php echo htmlspecialchars($_SESSION['register_form_data']['email'] ?? ''); ?>"
             required />
           <label for="email">Email address</label>
           <div class="invalid-feedback">
-            Please enter a valid email address
+            <?php echo $_SESSION['register_errors']['email'] ?? 'Please enter a valid email address'; ?>
           </div>
         </div>
 
-        <div class="form-floating">
-          <input
+        <div class="form-floating"> <input
             type="tel"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['register_errors']['phone']) ? 'is-invalid' : ''; ?>"
             id="phone"
             name="phone"
-            placeholder="Phone number" />
+            placeholder="Phone number"
+            value="<?php echo htmlspecialchars($_SESSION['register_form_data']['phone'] ?? ''); ?>" />
           <label for="phone">Phone number (optional)</label>
+          <?php if (isset($_SESSION['register_errors']['phone'])): ?>
+            <div class="invalid-feedback">
+              <?php echo $_SESSION['register_errors']['phone']; ?>
+            </div>
+          <?php endif; ?>
         </div>
 
-        <div class="form-floating position-relative">
-          <input
+        <div class="form-floating position-relative"> <input
             type="password"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['register_errors']['password']) ? 'is-invalid' : ''; ?>"
             id="password"
             name="password"
             placeholder="Password"
@@ -128,7 +145,7 @@ session_start();
             <i class="fas fa-eye"></i>
           </button>
           <div class="invalid-feedback">
-            Password must be at least 8 characters
+            <?php echo $_SESSION['register_errors']['password'] ?? 'Password must be at least 8 characters with uppercase, lowercase, and number'; ?>
           </div>
         </div>
 
@@ -136,15 +153,17 @@ session_start();
           <div class="strength-meter" id="strengthMeter"></div>
         </div>
 
-        <div class="form-floating">
-          <input
+        <div class="form-floating"> <input
             type="password"
-            class="form-control"
+            class="form-control <?php echo isset($_SESSION['register_errors']['confirm_password']) ? 'is-invalid' : ''; ?>"
             id="confirmPassword"
+            name="confirmPassword"
             placeholder="Confirm Password"
             required />
           <label for="confirmPassword">Confirm Password</label>
-          <div class="invalid-feedback">Passwords do not match</div>
+          <div class="invalid-feedback">
+            <?php echo $_SESSION['register_errors']['confirm_password'] ?? 'Passwords do not match'; ?>
+          </div>
         </div>
 
         <button type="submit" class="btn auth-btn">Create Account</button>
