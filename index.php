@@ -47,23 +47,8 @@ session_start();
     <div
       id="heroCarousel"
       class="carousel slide carousel-fade"
-      data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide-to="0"
-          class="active"
-          aria-current="true"></button>
-        <button
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide-to="1"></button>
-        <button
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide-to="2"></button>
-      </div>
+      data-bs-ride="carousel"
+      data-bs-interval="5000">
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img
