@@ -19,6 +19,9 @@ if ($selected_hotel_id) {
 
 <!-- Main Content -->
 <div class="admin-main">
+    <!-- Alert Container -->
+    <div id="alertContainer" class="alert-container mb-3"></div>
+
     <div class="content-header mb-3">
         <div>
             <h2>Room Management</h2>
@@ -128,13 +131,9 @@ if ($selected_hotel_id) {
                                     <button onclick="editRoom(<?= $room['room_id'] ?>)" class="btn btn-warning btn-sm" title="Edit Room">
                                         <i class="fas fa-edit fa-sm"></i>
                                     </button>
-                                    <form action="handlers/delete_room.php" method="POST" style="display: inline;">
-                                        <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
-                                        <input type="hidden" name="hotel_id" value="<?= $room['hotel_id'] ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete Room">
-                                            <i class="fas fa-trash fa-sm"></i>
-                                        </button>
-                                    </form>
+                                    <button onclick="deleteRoom(<?= $room['room_id'] ?>, '<?= htmlspecialchars($room['room_number']) ?>')" class="btn btn-danger btn-sm" title="Delete Room">
+                                        <i class="fas fa-trash fa-sm"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -183,7 +182,7 @@ if ($selected_hotel_id) {
                 <h5 class="modal-title">Edit Room</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="editModalBody">
                 <form id="editRoomForm" action="handlers/edit_room.php" method="POST">
                     <input type="hidden" name="room_id" id="edit_room_id">
 
@@ -227,44 +226,130 @@ if ($selected_hotel_id) {
 </div>
 
 <script>
+    function showAlert(type, message) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertContainer.innerHTML = ''; // Clear previous alerts
+        alertContainer.appendChild(alertDiv);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            alertDiv.classList.remove('show');
+            setTimeout(() => alertDiv.remove(), 150);
+        }, 5000);
+    } // Function to handle room edit
     function editRoom(roomId) {
+        // Reset form validation state
+        const form = document.getElementById('editRoomForm');
+        form.classList.remove('was-validated');
+
+        // Store the original form HTML
+        const originalFormHtml = document.getElementById('editModalBody').innerHTML;
+
+        // Show loading state
+        document.getElementById('editModalBody').innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+        // Show the modal first
+        const editModal = new bootstrap.Modal(document.getElementById('editRoomModal'));
+        editModal.show();
+
         // Fetch room details
-        fetch(`handlers/edit_room.php?room_id=${roomId}`)
+        fetch(`handlers/get_room.php?room_id=${roomId}`)
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'success') {
-                    const room = data.data.room;
-                    const roomTypes = data.data.room_types;
+                if (data.status === 'success') { // Restore the form HTML first
+                    document.getElementById('editModalBody').innerHTML = originalFormHtml;
 
-                    // Fill the form with room data
-                    document.getElementById('edit_room_id').value = room.room_id;
-                    document.getElementById('edit_room_number').value = room.room_number;
-                    document.getElementById('edit_floor_number').value = room.floor_number;
-                    document.getElementById('edit_status').value = room.status;
-
-                    // Fill room types dropdown
+                    // Populate room types dropdown
                     const roomTypeSelect = document.getElementById('edit_room_type_id');
                     roomTypeSelect.innerHTML = '<option value="">Select Room Type</option>';
-                    roomTypes.forEach(type => {
+                    data.room_types.forEach(type => {
                         const option = document.createElement('option');
                         option.value = type.room_type_id;
-                        option.text = type.type_name;
-                        option.selected = type.room_type_id === room.room_type_id;
+                        option.textContent = type.type_name;
                         roomTypeSelect.appendChild(option);
                     });
 
-                    // Show the modal
-                    const editModal = new bootstrap.Modal(document.getElementById('editRoomModal'));
-                    editModal.show();
+                    // Then populate form with room data
+                    document.getElementById('edit_room_id').value = data.room.room_id;
+                    document.getElementById('edit_room_number').value = data.room.room_number;
+                    document.getElementById('edit_room_type_id').value = data.room.room_type_id;
+                    document.getElementById('edit_floor_number').value = data.room.floor_number;
+                    document.getElementById('edit_status').value = data.room.status;
                 } else {
-                    alert('Error loading room details: ' + data.message);
+                    showAlert('danger', 'Error loading room details: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Error loading room details');
+                showAlert('danger', 'Error loading room details: ' + error.message);
             });
     }
+
+    // Function to handle room deletion
+    function deleteRoom(roomId, roomNumber) {
+        if (confirm(`Are you sure you want to delete Room ${roomNumber}? This action cannot be undone.`)) {
+            fetch('handlers/delete_room.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `room_id=${roomId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showAlert('success', 'Room deleted successfully');
+                        // Refresh the room list
+                        location.reload();
+                    } else {
+                        showAlert('danger', 'Error deleting room: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    showAlert('danger', 'Error deleting room: ' + error.message);
+                });
+        }
+    }
+
+    // Handle edit form submission
+    document.getElementById('editRoomForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Form validation
+        if (!this.checkValidity()) {
+            e.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+        }
+
+        const formData = new FormData(this);
+
+        fetch('handlers/edit_room.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert('success', 'Room updated successfully');
+                    // Close the modal
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editRoomModal'));
+                    editModal.hide();
+                    // Refresh the room list
+                    location.reload();
+                } else {
+                    showAlert('danger', 'Error updating room: ' + data.message);
+                }
+            })
+            .catch(error => {
+                showAlert('danger', 'Error updating room: ' + error.message);
+            });
+    });
 </script>
 
 <?php include_once 'includes/footer.php'; ?>

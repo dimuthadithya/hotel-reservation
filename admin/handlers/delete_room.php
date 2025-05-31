@@ -2,67 +2,46 @@
 require_once '../../config/db.php';
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../rooms.php');
+header('Content-Type: application/json');
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
     exit;
 }
 
+// Check if room_id is provided
 if (!isset($_POST['room_id'])) {
-    $_SESSION['error'] = 'Invalid request.';
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    echo json_encode(['status' => 'error', 'message' => 'Room ID is required']);
     exit;
 }
+
+$room_id = filter_var($_POST['room_id'], FILTER_SANITIZE_NUMBER_INT);
 
 try {
-    $room_id = intval($_POST['room_id']);
+    // Check if room has any active bookings
+    $stmt = $conn->prepare("
+        SELECT rb.room_id 
+        FROM room_bookings rb 
+        JOIN bookings b ON rb.booking_id = b.booking_id 
+        WHERE rb.room_id = ? 
+        AND b.booking_status NOT IN ('cancelled', 'checked_out')
+    ");
+    $stmt->execute([$room_id]);
 
-    // Start transaction
-    $conn->beginTransaction();
-
-    // First check if the room exists and get its hotel_id
-    $check_sql = "SELECT r.*, h.hotel_name FROM rooms r 
-                  JOIN hotels h ON r.hotel_id = h.hotel_id 
-                  WHERE r.room_id = ?";
-    $check_stmt = $conn->prepare($check_sql);
-    $check_stmt->execute([$room_id]);
-    $room = $check_stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$room) {
-        throw new Exception("Room not found");
+    if ($stmt->rowCount() > 0) {
+        echo json_encode(['status' => 'error', 'message' => 'Cannot delete room: It has existing active bookings']);
+        exit;
     }
 
-    // Check for existing bookings
-    $booking_sql = "SELECT COUNT(*) FROM room_bookings WHERE room_id = ? AND status != 'cancelled'";
-    $booking_stmt = $conn->prepare($booking_sql);
-    $booking_stmt->execute([$room_id]);
-    $has_bookings = $booking_stmt->fetchColumn() > 0;
-
-    if ($has_bookings) {
-        throw new Exception("Cannot delete room: There are existing bookings for this room");
+    // Delete room
+    $stmt = $conn->prepare("DELETE FROM rooms WHERE room_id = ?");
+    if ($stmt->execute([$room_id])) {
+        echo json_encode(['status' => 'success', 'message' => 'Room deleted successfully']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Error deleting room']);
     }
-
-    // Delete the room
-    $delete_sql = "DELETE FROM rooms WHERE room_id = ?";
-    $delete_stmt = $conn->prepare($delete_sql);
-    $delete_stmt->execute([$room_id]);
-
-    // Commit transaction
-    $conn->commit();
-    $_SESSION['success'] = "Room {$room['room_number']} deleted successfully";
 } catch (Exception $e) {
-    // Rollback transaction on error
-    if ($conn->inTransaction()) {
-        $conn->rollBack();
-    }
-    $_SESSION['error'] = $e->getMessage();
+    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+    exit;
 }
-
-// Redirect back
-$hotel_id = isset($_POST['hotel_id']) ? intval($_POST['hotel_id']) : null;
-if ($hotel_id) {
-    $redirect_url = "../rooms.php?hotel_id=$hotel_id";
-} else {
-    $redirect_url = "../rooms.php";
-}
-header("Location: $redirect_url");
-exit;
