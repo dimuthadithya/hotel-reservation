@@ -124,55 +124,28 @@ session_start();
             Hotel Information
           </h2>
           <div class="row">
-            <div class="col-md-6">
-              <div class="detail-item" id="hotelAddress">
-                <span class="detail-label">Address</span>
-                <span class="detail-value">
-                  123 Kandy Lake Road<br />
-                  Kandy, Sri Lanka
-                </span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Phone</span>
-                <span class="detail-value">+94 81 234 5678</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Email</span>
-                <span class="detail-value">info@luxuryresortkandy.com</span>
-              </div>
+            <div class="detail-item" id="hotelAddress">
+              <span class="detail-label">Address</span>
+              <span class="detail-value">
+                123 Kandy Lake Road<br />
+                Kandy, Sri Lanka
+              </span>
             </div>
-            <div class="col-md-6">
-              <div class="map-container" id="hotelMap">
-                <!-- Map will be initialized here -->
-                <img
-                  src="https://via.placeholder.com/600x300.png?text=Location+Map"
-                  alt="Hotel Location Map"
-                  class="w-100 h-100"
-                  style="object-fit: cover" />
-              </div>
+            <div class="detail-item">
+              <span class="detail-label">Phone</span>
+              <span class="detail-value">+94 81 234 5678</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">info@luxuryresortkandy.com</span>
             </div>
           </div>
-        </div>
-
-        <!-- Actions -->
+        </div> <!-- Actions -->
         <div class="action-buttons">
-          <button
-            class="btn action-button calendar-btn"
-            id="addToCalendarBtn">
-            <i class="fas fa-calendar-plus"></i>
-            Add to Calendar
-          </button>
           <button class="btn action-button print-btn" id="printBtn">
             <i class="fas fa-print"></i>
             Print Confirmation
           </button>
-          <a
-            href="https://maps.google.com"
-            target="_blank"
-            class="btn action-button calendar-btn">
-            <i class="fas fa-directions"></i>
-            Get Directions
-          </a>
         </div>
       </div>
     </div>

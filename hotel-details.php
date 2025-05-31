@@ -186,14 +186,11 @@ $hotel['amenities'] = $dummyAmenities;
                             No rooms available
                           <?php endif; ?>
                         </div>
-                      </div>
-                      <button
+                      </div> <a href="checkout.php?room_type=<?= $roomType['room_type_id'] ?>"
                         class="btn btn-primary select-room-btn"
-                        data-room-type-id="<?= $roomType['room_type_id'] ?>"
-                        data-room-name="<?= htmlspecialchars($roomType['type_name']) ?>"
                         <?= $roomType['available_rooms'] == 0 ? 'disabled' : '' ?>>
                         Select Room
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>

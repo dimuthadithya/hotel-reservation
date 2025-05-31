@@ -14,6 +14,24 @@ $stmt->bindParam(':id', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Fetch user's bookings
+$bookingStmt = $conn->prepare("
+    SELECT b.*, h.hotel_name, r.room_number, rt.type_name as room_type,
+           b.total_amount as total_price, b.booking_status as status, 
+           b.check_in_date, b.check_out_date,
+           b.adults, b.children, b.booking_reference
+    FROM bookings b
+    JOIN room_bookings rb ON b.booking_id = rb.booking_id
+    JOIN rooms r ON rb.room_id = r.room_id
+    JOIN hotels h ON b.hotel_id = h.hotel_id
+    JOIN room_types rt ON b.room_type_id = rt.room_type_id
+    WHERE b.user_id = :user_id
+    ORDER BY b.check_in_date DESC
+");
+$bookingStmt->bindParam(':user_id', $userId);
+$bookingStmt->execute();
+$bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -191,88 +209,91 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
               </button>
             </form>
           </div>
-        </div>
-
-        <!-- Bookings Tab -->
+        </div> <!-- Bookings Tab -->
         <div class="tab-pane fade" id="bookings" role="tabpanel">
           <div class="content-card">
             <h3 class="mb-4">My Bookings</h3>
-            <!-- Upcoming Booking -->
-            <div class="booking-card">
-              <div class="booking-header">
-                <h4>Luxury Resort Kandy</h4>
-                <span class="booking-status status-upcoming">Upcoming</span>
+            <?php if (empty($bookings)): ?>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>You don't have any bookings yet.
               </div>
-              <div class="booking-details">
-                <div class="booking-detail-item">
-                  <i class="fas fa-calendar"></i>
-                  <span>Check-in: May 15, 2024</span>
-                </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-calendar-check"></i>
-                  <span>Check-out: May 18, 2024</span>
-                </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-user"></i>
-                  <span>2 Adults</span>
-                </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-receipt"></i>
-                  <span>Booking ID: BK123456</span>
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-edit me-1"></i>Modify
-                </button>
-                <button class="btn btn-outline-danger btn-sm">
-                  <i class="fas fa-times me-1"></i>Cancel
-                </button>
-                <button class="btn btn-outline-secondary btn-sm">
-                  <i class="fas fa-download me-1"></i>Invoice
-                </button>
-              </div>
-            </div>
+            <?php else: ?>
+              <?php foreach ($bookings as $booking):
+                $checkInDate = new DateTime($booking['check_in_date']);
+                $checkOutDate = new DateTime($booking['check_out_date']);
+                $today = new DateTime();
 
-            <!-- Completed Booking -->
-            <div class="booking-card">
-              <div class="booking-header">
-                <h4>Beach Resort Galle</h4>
-                <span class="booking-status status-completed">Completed</span>
-              </div>
-              <div class="booking-details">
-                <div class="booking-detail-item">
-                  <i class="fas fa-calendar"></i>
-                  <span>Check-in: Mar 10, 2024</span>
+                // Determine booking status and corresponding CSS class
+                $statusClass = '';
+                $statusText = '';
+
+                if ($booking['booking_status'] === 'cancelled') {
+                  $statusClass = 'danger';
+                  $statusText = 'Cancelled';
+                } elseif ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate) {
+                  $statusClass = 'success';
+                  $statusText = 'Completed';
+                } elseif ($booking['booking_status'] === 'checked_in' || ($today >= $checkInDate && $today <= $checkOutDate)) {
+                  $statusClass = 'primary';
+                  $statusText = 'Active';
+                } else {
+                  $statusClass = 'info';
+                  $statusText = 'Upcoming';
+                }
+              ?>
+                <div class="booking-card mb-4">
+                  <div class="booking-header">
+                    <h4><?php echo htmlspecialchars($booking['hotel_name']); ?></h4>
+                    <span class="booking-status status-<?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
+                  </div>
+                  <div class="booking-details">
+                    <div class="booking-detail-item">
+                      <i class="fas fa-calendar"></i>
+                      <span>Check-in: <?php echo $checkInDate->format('M d, Y'); ?></span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-calendar-check"></i>
+                      <span>Check-out: <?php echo $checkOutDate->format('M d, Y'); ?></span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-bed"></i>
+                      <span>Room: <?php echo htmlspecialchars($booking['room_number']); ?> (<?php echo htmlspecialchars($booking['room_type']); ?>)</span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-user"></i>
+                      <span><?php echo $booking['adults']; ?> Adults<?php echo $booking['children'] > 0 ? ', ' . $booking['children'] . ' Children' : ''; ?></span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-receipt"></i>
+                      <span>Booking ID: <?php echo htmlspecialchars($booking['booking_reference']); ?></span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-dollar-sign"></i>
+                      <span>Total Amount: LKR <?php echo number_format($booking['total_price'], 2); ?></span>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <?php if ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate): ?>
+                      <!-- Show review button for completed stays -->
+                      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        <i class="fas fa-star me-1"></i>Write Review
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-download me-1"></i>Invoice
+                      </button>
+                      <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-redo me-1"></i>Book Again
+                      </button>
+                    <?php elseif ($booking['booking_status'] !== 'cancelled'): ?>
+                      <!-- Show invoice button for all non-cancelled bookings -->
+                      <button class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-download me-1"></i>Invoice
+                      </button>
+                    <?php endif; ?>
+                  </div>
                 </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-calendar-check"></i>
-                  <span>Check-out: Mar 15, 2024</span>
-                </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-user"></i>
-                  <span>2 Adults, 1 Child</span>
-                </div>
-                <div class="booking-detail-item">
-                  <i class="fas fa-receipt"></i>
-                  <span>Booking ID: BK123455</span>
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <button
-                  class="btn btn-primary btn-sm"
-                  data-bs-toggle="modal"
-                  data-bs-target="#reviewModal">
-                  <i class="fas fa-star me-1"></i>Write Review
-                </button>
-                <button class="btn btn-outline-secondary btn-sm">
-                  <i class="fas fa-download me-1"></i>Invoice
-                </button>
-                <button class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-redo me-1"></i>Book Again
-                </button>
-              </div>
-            </div>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </div>
         </div>
 

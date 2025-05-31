@@ -327,7 +327,7 @@ if ($selected_hotel_id) {
             return;
         }
 
-        const formData = new FormData(this);        // Submit the form directly - no need for fetch
+        const formData = new FormData(this); // Submit the form directly - no need for fetch
         this.submit();
     });
 </script>
