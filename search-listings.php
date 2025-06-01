@@ -117,20 +117,19 @@ session_start();
               <label class="form-check-label" for="property-type-resort">Resorts</label>
             </div>
           </div>
-
           <div class="filter-section">
             <h5 class="filter-title">Star Rating</h5>
             <div class="star-rating-filters">
-              <button class="btn btn-outline-secondary btn-sm me-2 mb-2">
+              <button class="btn btn-outline-secondary btn-sm me-2 mb-2" data-rating="5">
                 5 ★
               </button>
-              <button class="btn btn-outline-secondary btn-sm me-2 mb-2">
+              <button class="btn btn-outline-secondary btn-sm me-2 mb-2" data-rating="4">
                 4 ★
               </button>
-              <button class="btn btn-outline-secondary btn-sm me-2 mb-2">
+              <button class="btn btn-outline-secondary btn-sm me-2 mb-2" data-rating="3">
                 3 ★
               </button>
-              <button class="btn btn-outline-secondary btn-sm mb-2">
+              <button class="btn btn-outline-secondary btn-sm mb-2" data-rating="2">
                 2 ★
               </button>
             </div>
@@ -178,19 +177,21 @@ session_start();
       <div class="col-lg-9">
         <?php
         require_once 'config/db.php';
-
-        // Fetch all active hotels from hotels table
-        $sql = "SELECT * FROM hotels WHERE status = 'active'";
+        $sql = "SELECT h.*, 
+                       MIN(rt.base_price) as base_price 
+                FROM hotels h
+                LEFT JOIN room_types rt ON h.hotel_id = rt.hotel_id AND rt.status = 'active'
+                WHERE h.status = 'active'
+                GROUP BY h.hotel_id";
         $stmt = $conn->query($sql);
         $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
         <div class="results-count mb-4">
           <h4><?= count($hotels) ?> properties found</h4>
         </div>
-        <?php        // Loop through each hotel and display the hotel card
+        <?php
+        // Loop through each hotel and display the hotel card
         foreach ($hotels as $hotel) {
-          // Add dummy rating for now (you can replace this with real ratings later)
-          $hotel['average_rating'] = rand(35, 50) / 10;  // Dummy rating between 3.5 and 5.0
 
           // Fetch real amenities for this hotel
           $amenitiesQuery = "SELECT a.amenity_name 
@@ -201,12 +202,6 @@ session_start();
           $amenitiesStmt = $conn->prepare($amenitiesQuery);
           $amenitiesStmt->execute([$hotel['hotel_id']]);
           $amenities = $amenitiesStmt->fetchAll(PDO::FETCH_COLUMN);
-
-          // If no amenities found, provide some basic ones
-          if (empty($amenities)) {
-            $amenities = ['Free WiFi', 'Parking'];
-          }
-
           $hotel['amenities'] = json_encode($amenities);
 
           include 'components/hotelCard.php';

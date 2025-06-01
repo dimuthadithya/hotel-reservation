@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
           return 'LKR ' + Math.round(value).toLocaleString();
         },
         from: function (value) {
-          return Number(value.replace('LKR ', '').replace(',', ''));
+          return Number(value.replace(/[^\d.]/g, ''));
         }
       }
     });
@@ -45,7 +45,20 @@ document.addEventListener('DOMContentLoaded', function () {
     '.star-rating-filters button, .rating-buttons button'
   );
   ratingButtons.forEach((button) => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      const isStarRating = this.closest('.star-rating-filters');
+      const group = isStarRating
+        ? '.star-rating-filters button'
+        : '.rating-buttons button';
+
+      // If ctrl/cmd key is held, allow multiple selection
+      if (!e.ctrlKey && !e.metaKey) {
+        document.querySelectorAll(group).forEach((btn) => {
+          if (btn !== this) btn.classList.remove('active');
+        });
+      }
+
       this.classList.toggle('active');
       filterHotels();
     });
@@ -57,93 +70,28 @@ document.addEventListener('DOMContentLoaded', function () {
     sortSelect.addEventListener('change', filterHotels);
   }
 
-  function filterHotels() {
-    const hotelCards = document.querySelectorAll('.hotel-card');
-    if (!hotelCards.length) return;
-
-    let visibleHotels = Array.from(hotelCards);
-
-    // Get filter values
-    const selectedPropertyTypes = Array.from(
-      document.querySelectorAll('[id^="property-type-"]:checked')
-    ).map((cb) => cb.value);
-
-    const selectedAmenities = Array.from(
-      document.querySelectorAll('[id^="amenity-"]:checked')
-    ).map((cb) => cb.value);
-
-    const selectedStarRatings = Array.from(
-      document.querySelectorAll('.star-rating-filters button.active')
-    ).map((btn) => parseInt(btn.textContent));
-
-    const selectedGuestRatings = Array.from(
-      document.querySelectorAll('.rating-buttons button.active')
-    ).map((btn) => {
-      const text = btn.textContent.trim();
-      return parseFloat(text.replace('+', ''));
+  // Update results count and UI
+  function updateResults(visibleHotels) {
+    // Update visibility
+    const allHotels = document.querySelectorAll('.hotel-card');
+    allHotels.forEach((card) => {
+      card.style.display = visibleHotels.includes(card) ? 'block' : 'none';
     });
 
-    // Get price range values
-    const priceValues = priceRange ? priceRange.noUiSlider.get() : null;
-    const minPrice = priceValues
-      ? parseFloat(priceValues[0].replace('LKR ', '').replace(',', ''))
-      : 0;
-    const maxPrice = priceValues
-      ? parseFloat(priceValues[1].replace('LKR ', '').replace(',', ''))
-      : Infinity;
-
-    // Filter by property type
-    if (selectedPropertyTypes.length > 0) {
-      visibleHotels = visibleHotels.filter((hotel) => {
-        const propertyType = hotel.dataset.propertyType;
-        return selectedPropertyTypes.includes(propertyType);
-      });
+    // Update results count
+    const resultsCount = document.querySelector('.results-count h4');
+    if (resultsCount) {
+      resultsCount.textContent = `${visibleHotels.length} properties found`;
     }
 
-    // Filter by amenities
-    if (selectedAmenities.length > 0) {
-      visibleHotels = visibleHotels.filter((hotel) => {
-        const hotelAmenities = JSON.parse(hotel.dataset.amenities || '[]');
-        return selectedAmenities.every((amenity) =>
-          hotelAmenities
-            .map((a) => a.toLowerCase())
-            .includes(amenity.toLowerCase())
-        );
-      });
-    }
-
-    // Filter by star rating
-    if (selectedStarRatings.length > 0) {
-      visibleHotels = visibleHotels.filter((hotel) => {
-        const starRating = parseInt(hotel.dataset.starRating);
-        return selectedStarRatings.includes(starRating);
-      });
-    }
-
-    // Filter by guest rating
-    if (selectedGuestRatings.length > 0) {
-      visibleHotels = visibleHotels.filter((hotel) => {
-        const rating = parseFloat(hotel.dataset.rating);
-        return selectedGuestRatings.some((minRating) => rating >= minRating);
-      });
-    }
-
-    // Filter by price range
-    if (priceRange) {
-      visibleHotels = visibleHotels.filter((hotel) => {
-        const price = parseFloat(hotel.dataset.price);
-        return price >= minPrice && price <= maxPrice;
-      });
-    }
-
-    // Sort hotels
-    if (sortSelect) {
+    // Sort visible hotels if needed
+    if (sortSelect && visibleHotels.length > 0) {
       const sortBy = sortSelect.value;
       visibleHotels.sort((a, b) => {
-        const priceA = parseFloat(a.dataset.price);
-        const priceB = parseFloat(b.dataset.price);
-        const ratingA = parseFloat(a.dataset.rating);
-        const ratingB = parseFloat(b.dataset.rating);
+        const priceA = parseFloat(a.dataset.price) || 0;
+        const priceB = parseFloat(b.dataset.price) || 0;
+        const ratingA = parseFloat(a.dataset.rating) || 0;
+        const ratingB = parseFloat(b.dataset.rating) || 0;
 
         switch (sortBy) {
           case 'Price: Low to High':
@@ -158,17 +106,108 @@ document.addEventListener('DOMContentLoaded', function () {
             return priceA - priceB;
         }
       });
+
+      // Re-append sorted hotels to maintain sort order
+      const container = visibleHotels[0].parentNode;
+      visibleHotels.forEach((hotel) => container.appendChild(hotel));
     }
+  }
 
-    // Update visibility
-    hotelCards.forEach((card) => {
-      card.style.display = visibleHotels.includes(card) ? 'block' : 'none';
-    });
+  function filterHotels() {
+    const hotelCards = document.querySelectorAll('.hotel-card');
+    if (!hotelCards.length) return;
 
-    // Update results count
-    const resultsCount = document.querySelector('.results-count h4');
-    if (resultsCount) {
-      resultsCount.textContent = `${visibleHotels.length} properties found`;
+    try {
+      let visibleHotels = Array.from(hotelCards);
+
+      // Get filter values
+      const selectedPropertyTypes = Array.from(
+        document.querySelectorAll('[id^="property-type-"]:checked')
+      ).map((cb) => cb.value);
+
+      const selectedAmenities = Array.from(
+        document.querySelectorAll('[id^="amenity-"]:checked')
+      ).map((cb) => cb.value);
+
+      const selectedStarRatings = Array.from(
+        document.querySelectorAll('.star-rating-filters button.active')
+      ).map((btn) => parseInt(btn.dataset.rating || btn.textContent));
+
+      const selectedGuestRatings = Array.from(
+        document.querySelectorAll('.rating-buttons button.active')
+      ).map((btn) => {
+        const text = btn.textContent.trim();
+        return parseFloat(text.replace('+', ''));
+      });
+
+      // Get price range values
+      const priceValues = priceRange ? priceRange.noUiSlider.get() : null;
+      const minPrice = priceValues
+        ? parseFloat(priceValues[0].replace(/[^\d.]/g, ''))
+        : 0;
+      const maxPrice = priceValues
+        ? parseFloat(priceValues[1].replace(/[^\d.]/g, ''))
+        : Infinity;
+
+      // Filter by property type
+      if (selectedPropertyTypes.length > 0) {
+        visibleHotels = visibleHotels.filter((hotel) => {
+          const propertyType = (hotel.dataset.propertyType || '').toLowerCase();
+          return selectedPropertyTypes
+            .map((type) => type.toLowerCase())
+            .includes(propertyType);
+        });
+      }
+
+      // Filter by amenities
+      if (selectedAmenities.length > 0) {
+        visibleHotels = visibleHotels.filter((hotel) => {
+          try {
+            const hotelAmenities = JSON.parse(hotel.dataset.amenities || '[]');
+            return selectedAmenities.every((amenity) =>
+              hotelAmenities
+                .map((a) => a.toLowerCase())
+                .includes(amenity.toLowerCase())
+            );
+          } catch (e) {
+            return false;
+          }
+        });
+      }
+
+      // Filter by star rating
+      if (selectedStarRatings.length > 0) {
+        visibleHotels = visibleHotels.filter((hotel) => {
+          const starRating = parseInt(hotel.dataset.starRating) || 0;
+          return selectedStarRatings.includes(starRating);
+        });
+      }
+
+      // Filter by guest rating
+      if (selectedGuestRatings.length > 0) {
+        visibleHotels = visibleHotels.filter((hotel) => {
+          const rating = parseFloat(hotel.dataset.rating) || 0;
+          return selectedGuestRatings.some((minRating) => rating >= minRating);
+        });
+      }
+
+      // Filter by price range
+      if (priceRange && priceValues) {
+        visibleHotels = visibleHotels.filter((hotel) => {
+          const price = parseFloat(hotel.dataset.price) || 0;
+          return price >= minPrice && price <= maxPrice;
+        });
+      }
+
+      // Update results and sort
+      updateResults(visibleHotels);
+    } catch (error) {
+      // On error, show all hotels
+      hotelCards.forEach((card) => (card.style.display = 'block'));
+      const resultsCount = document.querySelector('.results-count h4');
+      if (resultsCount) {
+        resultsCount.textContent = `${hotelCards.length} properties found`;
+      }
     }
   }
 

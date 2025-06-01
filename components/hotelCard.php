@@ -14,11 +14,11 @@
          */
 
         require_once __DIR__ . '/../includes/utility_functions.php';
-        ?><div class="hotel-card mb-4"
+        ?> <div class="hotel-card mb-4"
           data-property-type="<?= strtolower($hotel['property_type']) ?>"
           data-star-rating="<?= intval($hotel['star_rating']) ?>"
           data-rating="<?= floatval($hotel['average_rating']) ?>"
-          data-price="<?= floatval($minPrice) ?>"
+          data-price="<?= floatval($hotel['base_price']) ?>"
           data-amenities='<?= htmlspecialchars(json_encode($amenities), ENT_QUOTES, 'UTF-8') ?>'>
           <div class="row g-0">
               <div class="col-md-4">
@@ -51,7 +51,7 @@
                               <div class="review-score"> <?php if ($hotel['average_rating'] > 0): ?> <span class="score"><?= number_format($hotel['average_rating'], 1) ?></span>
                                       <span class="score-text"><?= getRatingText($hotel['average_rating']) ?></span>
                                   <?php endif; ?>
-                                  <span class="review-count"><?= $hotel['total_reviews'] ?? rand(10, 50) ?> reviews</span>
+                                  <span class="review-count"><?= $hotel['total_reviews'] ?? 0 ?> reviews</span>
                               </div>
                           </div>
                       </div>
@@ -68,15 +68,8 @@
                           </div>
                           <div class="text-end">
                               <div class="price">
-                                  <small class="text-muted">per night</small> <?php
-                                                                                // Get minimum price from room types
-                                                                                $sql = "SELECT MIN(base_price) as min_price FROM room_types WHERE hotel_id = :hotel_id AND status = 'active'";
-                                                                                $stmt = $conn->prepare($sql);
-                                                                                $stmt->execute(['hotel_id' => $hotel['hotel_id']]);
-                                                                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                                                                $minPrice = $result['min_price'] ?? 0;
-                                                                                ?>
-                                  <h5 class="mb-0">LKR <?= number_format($minPrice) ?></h5>
+                                  <small class="text-muted">per night</small>
+                                  <h5 class="mb-0">LKR <?= number_format($hotel['base_price']) ?></h5>
                               </div>
                               <a href="hotel-details.php?id=<?= $hotel['hotel_id'] ?>" class="btn btn-primary mt-2">View Details</a>
                           </div>
