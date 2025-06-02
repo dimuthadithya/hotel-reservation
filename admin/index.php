@@ -30,7 +30,7 @@
       $total_users = $users_result->fetch(PDO::FETCH_ASSOC)['total'];
 
       // Get total revenue
-      $revenue_sql = "SELECT SUM(amount) as total FROM payments WHERE status = 'paid'";
+      $revenue_sql = "SELECT SUM(amount) as total FROM payments WHERE status = 'completed'";
       $revenue_result = $conn->query($revenue_sql);
       $total_revenue = $revenue_result->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
       ?>

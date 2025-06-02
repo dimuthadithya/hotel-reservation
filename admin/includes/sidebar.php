@@ -3,14 +3,32 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 <!-- Sidebar -->
 <div class="admin-sidebar">
+    <?php
+    // Get user details
+    try {
+        $user_sql = "SELECT first_name, last_name, role, profile_image FROM users WHERE user_id = ?";
+        $user_stmt = $conn->prepare($user_sql);
+        $user_stmt->execute([$_SESSION['user_id']]);
+        $user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+
+        $profile_image = $user['profile_image'] ?? '../assets/img/avatar1.jpg';
+        $full_name = $user['first_name'] . ' ' . $user['last_name'];
+    } catch (PDOException $e) {
+        // If there's an error, use default values
+        $profile_image = '../assets/img/avatar1.jpg';
+        $full_name = 'Admin User';
+        $user = ['role' => 'admin'];
+    }
+    ?>
     <div class="sidebar-user">
         <img
-            src="../assets/img/avatar1.jpg"
-            alt="Admin"
-            class="admin-avatar" />
+            src="<?= htmlspecialchars($profile_image) ?>"
+            alt="<?= htmlspecialchars($full_name) ?>"
+            class="admin-avatar"
+            onerror="this.src='../assets/img/avatar1.jpg';" />
         <div class="admin-info">
-            <h6 class="admin-name">Admin User</h6>
-            <span class="admin-role">Super Admin</span>
+            <h6 class="admin-name"><?= htmlspecialchars($full_name) ?></h6>
+            <span class="admin-role"><?= ucfirst(htmlspecialchars($user['role'])) ?></span>
         </div>
     </div>
     <ul class="sidebar-nav">

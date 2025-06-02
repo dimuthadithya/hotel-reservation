@@ -24,35 +24,6 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="admin-main">
     <div class="content-header">
         <h2>Payment Verification</h2>
-        <div class="header-actions">
-            <button class="btn btn-outline-primary" id="exportPayments">
-                <i class="fas fa-download"></i> Export Report
-            </button>
-        </div>
-    </div>
-
-    <div class="payment-filters mb-3">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <select class="form-select" id="paymentStatusFilter">
-                    <option value="">All Payment Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="failed">Failed</option>
-                    <option value="expired">Expired</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="paymentMethodFilter">
-                    <option value="">All Payment Methods</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                    <option value="cash">Cash</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="date" class="form-control" id="paymentDateFilter">
-            </div>
-        </div>
     </div>
 
     <div class="payments-list">
@@ -180,19 +151,6 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <script>
-    // Function to filter payments
-    function filterPayments() {
-        const status = document.getElementById('paymentStatusFilter').value;
-        const method = document.getElementById('paymentMethodFilter').value;
-        const date = document.getElementById('paymentDateFilter').value;
-
-        // Implement filtering logic
-        const rows = document.querySelectorAll('.payments-list tbody tr');
-        rows.forEach(row => {
-            // Add filtering logic here
-        });
-    }
-
     // Function to view payment details
     async function viewPayment(paymentId) {
         try {
@@ -248,11 +206,6 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             alert('Failed to verify payment');
         }
     }
-
-    // Add event listeners for filters
-    document.getElementById('paymentStatusFilter').addEventListener('change', filterPayments);
-    document.getElementById('paymentMethodFilter').addEventListener('change', filterPayments);
-    document.getElementById('paymentDateFilter').addEventListener('change', filterPayments);
 </script>
 
 <?php include_once 'includes/footer.php'; ?>
