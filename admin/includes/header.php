@@ -2,8 +2,10 @@
 include_once '../config/db.php';
 session_start();
 
-if (!isset($_SESSION['user_id']) && $_SESSION['role'] !== 'admin') {
-    header('Location: ../login.php');
+// Check if user is logged in and has admin role
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['error'] = "You must be an administrator to access this area.";
+    header('Location: ../index.php');
     exit;
 }
 ?>
