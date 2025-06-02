@@ -141,7 +141,8 @@ CREATE TABLE room_bookings (
 );
 
 -- 11. Payments Table
-CREATE TABLE payments (    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
     booking_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_method ENUM('bank_transfer', 'cash') NOT NULL,
@@ -150,14 +151,39 @@ CREATE TABLE payments (    payment_id INT PRIMARY KEY AUTO_INCREMENT,
     payment_deadline DATETIME,             -- Deadline for payment completion
     status ENUM('pending', 'completed', 'failed', 'expired') DEFAULT 'pending',
     bank_slip VARCHAR(255) NULL,           -- Path to uploaded bank slip
-    bank_reference VARCHAR(100) NULL,      -- Bank reference number
+    bank_reference VARCHAR(100) NULL,      -- Bank reference number for bank transfers
     transfer_date DATE NULL,               -- Date of bank transfer
-    bank_name VARCHAR(100) NULL,           -- Name of the bank used
+    bank_name VARCHAR(100) NULL,           -- Name of the bank used for transfer
     notes TEXT NULL,                       -- Any additional notes
     verified_by INT NULL,                  -- Admin who verified the payment
     verified_at DATETIME NULL,             -- When payment was verified
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id),
-    FOREIGN KEY (verified_by) REFERENCES users(user_id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE RESTRICT,
+    FOREIGN KEY (verified_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    UNIQUE INDEX idx_transaction (transaction_id),
+    INDEX idx_payment_booking (booking_id),
+    INDEX idx_payment_status (status),
+    INDEX idx_payment_method (payment_method),
+    INDEX idx_payment_date (payment_date),
+    INDEX idx_payment_deadline (payment_deadline)
+);
+
+-- 11b. Payment Logs Table
+CREATE TABLE payment_logs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    payment_id INT NOT NULL,
+    booking_id INT NOT NULL,
+    action VARCHAR(50) NOT NULL,           -- e.g., 'payment_initiated', 'payment_verified', 'payment_failed'
+    notes TEXT NULL,                       -- Details about the action
+    user_id INT NOT NULL,                  -- Who performed the action
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id) ON DELETE CASCADE,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+    INDEX idx_payment_log (payment_id),
+    INDEX idx_booking_log (booking_id),
+    INDEX idx_user_log (user_id)
 );
 
 -- 12. Reviews and Ratings Table

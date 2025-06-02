@@ -46,6 +46,13 @@ try {
             throw new Exception('Please fill in all required fields');
         }
 
+        // Validate transfer date format
+        $transfer_date = $_POST['transfer_date'];
+        $date = DateTime::createFromFormat('Y-m-d', $transfer_date);
+        if (!$date || $date->format('Y-m-d') !== $transfer_date) {
+            throw new Exception('Invalid transfer date format');
+        }
+
         // Handle file upload
         if (isset($_FILES['bank_slip']) && $_FILES['bank_slip']['error'] === 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -89,7 +96,7 @@ try {
         $payment_method,
         $bank_slip_path,
         $_POST['bank_reference'] ?? null,
-        $_POST['transfer_date'] ?? null,
+        $date ? $date->format('Y-m-d') : null, // Format the date correctly
         $_POST['bank_name'] ?? null,
         $_POST['notes'] ?? null,
         'pending'
@@ -107,22 +114,21 @@ try {
     if (!$update_booking->execute([$booking_id])) {
         throw new Exception('Failed to update booking status');
     }
-
     $conn->commit();
 
-    // Set success message based on payment method
-    if ($payment_method === 'bank_transfer') {
-        $_SESSION['success'] = 'Bank transfer details submitted successfully. Your payment is being verified.';
-    } else { // cash payment
-        $_SESSION['success'] = 'Cash payment option confirmed. Please visit our office to complete the payment.';
-    }
+    // Store payment info in session for confirmation page
+    $_SESSION['payment_id'] = $conn->lastInsertId();
+    $_SESSION['payment_method'] = $payment_method;
 } catch (Exception $e) {
     if ($conn->inTransaction()) {
         $conn->rollBack();
     }
     error_log("Error in process_payment.php: " . $e->getMessage());
     $_SESSION['error'] = $e->getMessage();
+    header('Location: ../dashboard.php#bookings');
+    exit;
 }
 
-header('Location: ../dashboard.php#bookings');
+// Redirect to confirmation page
+header('Location: ../payment-confirmation.php');
 exit;

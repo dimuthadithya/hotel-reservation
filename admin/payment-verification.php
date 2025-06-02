@@ -104,20 +104,28 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         onclick="viewPayment(<?= $payment['payment_id'] ?>)"
                                         title="View Details">
                                         <i class="fas fa-eye"></i>
-                                    </button>
-                                    <?php if ($payment['status'] === 'pending'): ?>
-                                        <button type="button"
-                                            class="btn btn-sm btn-outline-success"
-                                            onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'completed')"
-                                            title="Approve Payment">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button"
-                                            class="btn btn-sm btn-outline-danger"
-                                            onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'failed')"
-                                            title="Reject Payment">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                    </button> <?php if ($payment['status'] === 'pending'): ?>
+                                        <?php if ($payment['payment_method'] === 'bank_transfer'): ?>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-success"
+                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'completed')"
+                                                title="Verify Bank Transfer">
+                                                <i class="fas fa-check"></i> Verify Transfer
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'failed')"
+                                                title="Reject Transfer">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        <?php else: ?>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-success"
+                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'completed')"
+                                                title="Mark Cash Payment as Received">
+                                                <i class="fas fa-money-bill"></i> Mark as Paid
+                                            </button>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
                             </td>

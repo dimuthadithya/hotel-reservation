@@ -288,14 +288,54 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="booking-detail-item">
                       <i class="fas fa-dollar-sign"></i>
-                      <span>Total Amount: LKR <?php echo number_format($booking['total_price'], 2); ?></span>
+                      <span>Total Amount: LKR <?= number_format($booking['total_price'], 2) ?></span>
+                    </div>
+                    <div class="booking-detail-item">
+                      <i class="fas fa-money-check"></i>
+                      <span>Payment:
+                        <?php
+                        $paymentStmt = $conn->prepare("
+                            SELECT status, payment_method 
+                            FROM payments 
+                            WHERE booking_id = ? 
+                            ORDER BY payment_id DESC 
+                            LIMIT 1
+                        ");
+                        $paymentStmt->execute([$booking['booking_id']]);
+                        $paymentInfo = $paymentStmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($paymentInfo) {
+                          if ($paymentInfo['payment_method'] === 'bank_transfer') {
+                            echo '<span class="badge bg-info">Bank Transfer - ';
+                          } else {
+                            echo '<span class="badge bg-warning">Cash Payment - ';
+                          }
+                          echo ucfirst($paymentInfo['status']) . '</span>';
+                        } else {
+                          echo '<span class="badge bg-secondary">Not Initiated</span>';
+                        }
+                        ?>
+                      </span>
                     </div>
                   </div>
-                  <div class="d-flex gap-2">
-                    <?php if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending'): ?>
-                      <a href="payment.php?booking_id=<?= $booking['booking_id'] ?>" class="btn btn-success btn-sm">
-                        <i class="fas fa-credit-card me-1"></i>Pay Now
-                      </a>
+                  <div class="d-flex gap-2"> <?php if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending'): ?>
+                      <?php if (!$paymentInfo): ?>
+                        <a href="payment.php?booking_id=<?= $booking['booking_id'] ?>" class="btn btn-success btn-sm">
+                          <i class="fas fa-credit-card me-1"></i>Pay Now
+                        </a>
+                      <?php else: ?>
+                        <?php if ($paymentInfo['payment_method'] === 'bank_transfer'): ?>
+                          <?php if ($paymentInfo['status'] === 'pending'): ?>
+                            <span class="badge bg-info">Bank Transfer Pending Verification</span>
+                          <?php elseif ($paymentInfo['status'] === 'completed'): ?>
+                            <span class="badge bg-success">Payment Verified</span>
+                          <?php else: ?>
+                            <span class="badge bg-danger">Payment Failed</span>
+                          <?php endif; ?>
+                        <?php else: ?>
+                          <span class="badge bg-warning">Cash Payment on Arrival</span>
+                        <?php endif; ?>
+                      <?php endif; ?>
                     <?php endif; ?>
 
                     <?php if ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate): ?>

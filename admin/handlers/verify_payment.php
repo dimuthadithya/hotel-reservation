@@ -36,19 +36,20 @@ try {
 
     if (!$payment) {
         throw new Exception('Invalid payment or payment already processed');
-    }
-
-    // Update payment status
+    }    // Update payment status
     $updatePayment = $conn->prepare("
         UPDATE payments 
         SET status = ?,
             verified_by = ?,
             verified_at = NOW(),
-            notes = CONCAT(COALESCE(notes, ''), '\nAdmin Notes: ', ?)
+            notes = CASE 
+                WHEN notes IS NULL OR notes = '' THEN ?
+                ELSE CONCAT(notes, '\nAdmin Notes: ', ?)
+            END
         WHERE payment_id = ?
     ");
 
-    if (!$updatePayment->execute([$status, $_SESSION['user_id'], $notes, $payment_id])) {
+    if (!$updatePayment->execute([$status, $_SESSION['user_id'], $notes, $notes, $payment_id])) {
         throw new Exception('Failed to update payment status');
     }
 
@@ -56,7 +57,8 @@ try {
     if ($status === 'completed') {
         $updateBooking = $conn->prepare("
             UPDATE bookings 
-            SET payment_status = 'paid',
+            SET booking_status = 'confirmed',
+                payment_status = 'paid',
                 payment_date = NOW()
             WHERE booking_id = ?
         ");
@@ -64,6 +66,23 @@ try {
         if (!$updateBooking->execute([$payment['booking_id']])) {
             throw new Exception('Failed to update booking status');
         }
+
+        // Add logging for the payment completion
+        $logMessage = $payment['payment_method'] === 'bank_transfer' ?
+            'Bank transfer verified by admin' :
+            'Cash payment received at office';
+
+        $addPaymentLog = $conn->prepare("
+            INSERT INTO payment_logs (payment_id, booking_id, action, notes, user_id)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $addPaymentLog->execute([
+            $payment_id,
+            $payment['booking_id'],
+            'payment_verified',
+            $logMessage,
+            $_SESSION['user_id']
+        ]);
     } else if ($status === 'failed') {
         // If payment verification failed, cancel the booking
         $updateBooking = $conn->prepare("
