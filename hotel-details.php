@@ -65,9 +65,6 @@ $hotel['amenities'] = $dummyAmenities;
     <div class="main-gallery">
       <img src="<?= $hotel['main_image'] ? 'uploads/img/hotels/' . $hotel['hotel_id'] . '/' . $hotel['main_image'] : 'assets/img/luxury-suite.jpg' ?>"
         alt="<?= htmlspecialchars($hotel['hotel_name']) ?>" />
-      <a href="#" class="virtual-tour-btn">
-        <i class="fas fa-vr-cardboard me-2"></i>Virtual Tour
-      </a>
     </div>
 
   </section>

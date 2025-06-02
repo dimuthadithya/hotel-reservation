@@ -1,5 +1,12 @@
 <?php
 session_start();
+include './config/db.php';
+
+$sql = "SELECT * FROM hotels WHERE status = 'active' LIMIT 3";
+$stmt = $conn->query($sql);
+$hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+var_dump($hotels);
 ?>
 
 <!DOCTYPE html>
@@ -106,53 +113,19 @@ session_start();
   <section class="py-5" id="rooms">
     <div class="container">
       <div class="row">
-        <div class="col-md-4">
-          <div class="card room-card">
-            <img
-              src="assets/img/luxury-suite.jpg"
-              class="card-img-top"
-              alt="Luxury City View Suite" />
-            <div class="card-body">
-              <h5 class="card-title">Luxury City View Suite</h5>
-              <p class="card-text">
-                Experience the best of city living in our luxurious suites.
-              </p>
-              <a href="#" class="btn btn-primary">Learn More</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card room-card">
-            <img
-              src="assets/img/rustic-cabin.jpg"
-              class="card-img-top"
-              alt="Rustic Cabin Retreat" />
-            <div class="card-body">
-              <h5 class="card-title">Rustic Cabin Retreat</h5>
-              <p class="card-text">
-                Escape to nature in our cozy cabins, perfect for a relaxing
-                getaway.
-              </p>
-              <a href="#" class="btn btn-primary">Learn More</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card room-card">
-            <img
-              src="assets/img/beach-villa.jpg"
-              class="card-img-top"
-              alt="Exclusive Beach Villa" />
-            <div class="card-body">
-              <h5 class="card-title">Exclusive Beach Villa</h5>
-              <p class="card-text">
-                Indulge in a private beachfront experience with stunning ocean
-                views.
-              </p>
-              <a href="#" class="btn btn-primary">Learn More</a>
-            </div>
-          </div>
-        </div>
+        <?php
+        // hotels
+        foreach ($hotels as $hotel) {
+
+          $hotelName = $hotel['hotel_name'];
+          $hotelId = $hotel['hotel_id'];
+          $hotelDistrict   = $hotel['district'];
+          $hotelImage = $hotel['main_image'];
+
+
+          include './components/indexHotelCard.php';
+        }
+        ?>
       </div>
     </div>
   </section>
