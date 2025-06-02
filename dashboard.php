@@ -134,15 +134,6 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
             <a
               class="nav-link"
               data-bs-toggle="tab"
-              href="#reviews"
-              role="tab">
-              <i class="fas fa-star me-2"></i>Reviews
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              data-bs-toggle="tab"
               href="#settings"
               role="tab">
               <i class="fas fa-cog me-2"></i>Settings
@@ -336,16 +327,7 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                           <span class="badge bg-warning">Cash Payment on Arrival</span>
                         <?php endif; ?>
                       <?php endif; ?>
-                    <?php endif; ?>
-
-                    <?php if ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate): ?>
-                      <!-- Show review button for completed stays -->
-                      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                        <i class="fas fa-star me-1"></i>Write Review
-                      </button>
-                    <?php endif; ?>
-
-                    <?php if ($booking['payment_status'] === 'paid'): ?>
+                    <?php endif; ?> <?php if ($booking['payment_status'] === 'paid'): ?>
                       <button class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-download me-1"></i>Invoice
                       </button>
@@ -355,45 +337,7 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
               <?php endforeach; ?>
             <?php endif; ?>
           </div>
-        </div>
-
-        <!-- Reviews Tab -->
-        <div class="tab-pane fade" id="reviews" role="tabpanel">
-          <div class="content-card">
-            <h3 class="mb-4">My Reviews</h3>
-            <!-- Review Card -->
-            <div class="review-card" id="review-1">
-              <div class="review-header">
-                <div class="review-hotel-info">
-                  <h5>Beach Resort Galle</h5>
-                  <p class="review-date">March 15, 2024</p>
-                </div>
-                <div class="review-rating" data-rating="5">★★★★★</div>
-              </div>
-              <p class="review-text mb-3">
-                "Amazing experience! The beach view from our room was
-                breathtaking. Staff were incredibly friendly and helpful. The
-                spa service was top-notch. Would definitely recommend!"
-              </p>
-              <div class="d-flex gap-2">
-                <button
-                  class="btn btn-outline-primary btn-sm edit-review-btn"
-                  data-review-id="1"
-                  data-bs-toggle="modal"
-                  data-bs-target="#editReviewModal">
-                  <i class="fas fa-edit me-1"></i>Edit
-                </button>
-                <button
-                  class="btn btn-outline-danger btn-sm delete-review-btn"
-                  data-review-id="1">
-                  <i class="fas fa-trash me-1"></i>Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Settings Tab -->
+        </div> <!-- Settings Tab -->
         <div class="tab-pane fade" id="settings" role="tabpanel">
           <div class="content-card">
             <h3 class="mb-4">Account Settings</h3>
@@ -439,220 +383,11 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                 Update Password
               </button>
             </form>
-
-
-            <!-- Danger Zone -->
-            <div class="card bg-light">
-              <div class="card-body">
-                <h5 class="text-danger mb-3">Danger Zone</h5>
-                <button
-                  class="btn btn-outline-danger"
-                  data-bs-toggle="modal"
-                  data-bs-target="#deleteAccountModal">
-                  Delete Account
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Review Modal -->
-  <div class="modal fade" id="reviewModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Write a Review</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="reviewForm">
-            <div class="mb-3">
-              <label class="form-label">Rating</label>
-              <div class="rating-input">
-                <div class="btn-group" role="group">
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="rating"
-                    id="rating5"
-                    value="5"
-                    checked />
-                  <label class="btn btn-outline-warning" for="rating5">5★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="rating"
-                    id="rating4"
-                    value="4" />
-                  <label class="btn btn-outline-warning" for="rating4">4★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="rating"
-                    id="rating3"
-                    value="3" />
-                  <label class="btn btn-outline-warning" for="rating3">3★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="rating"
-                    id="rating2"
-                    value="2" />
-                  <label class="btn btn-outline-warning" for="rating2">2★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="rating"
-                    id="rating1"
-                    value="1" />
-                  <label class="btn btn-outline-warning" for="rating1">1★</label>
-                </div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="reviewText" class="form-label">Your Review</label>
-              <textarea
-                class="form-control"
-                id="reviewText"
-                rows="4"
-                required></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary">Submit Review</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Review Modal -->
-  <div class="modal fade" id="editReviewModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Review</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editReviewForm">
-            <input type="hidden" id="editReviewId" />
-            <div class="mb-3">
-              <label class="form-label">Rating</label>
-              <div class="rating-input">
-                <div class="btn-group" role="group">
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="editRating"
-                    id="editRating5"
-                    value="5" />
-                  <label class="btn btn-outline-warning" for="editRating5">5★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="editRating"
-                    id="editRating4"
-                    value="4" />
-                  <label class="btn btn-outline-warning" for="editRating4">4★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="editRating"
-                    id="editRating3"
-                    value="3" />
-                  <label class="btn btn-outline-warning" for="editRating3">3★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="editRating"
-                    id="editRating2"
-                    value="2" />
-                  <label class="btn btn-outline-warning" for="editRating2">2★</label>
-                  <input
-                    type="radio"
-                    class="btn-check"
-                    name="editRating"
-                    id="editRating1"
-                    value="1" />
-                  <label class="btn btn-outline-warning" for="editRating1">1★</label>
-                </div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="editReviewText" class="form-label">Your Review</label>
-              <textarea
-                class="form-control"
-                id="editReviewText"
-                rows="4"
-                required></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Delete Account Modal -->
-  <div class="modal fade" id="deleteAccountModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title text-danger">Delete Account</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p class="mb-3">
-            Are you sure you want to delete your account? This action cannot
-            be undone.
-          </p>
-          <div class="form-floating mb-3">
-            <input
-              type="password"
-              class="form-control"
-              id="deleteAccountPassword"
-              required />
-            <label for="deleteAccountPassword">Enter your password to confirm</label>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-danger">Delete Account</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <?php include 'components/footer.php'; ?>
