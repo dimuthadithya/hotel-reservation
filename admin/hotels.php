@@ -416,6 +416,28 @@
                         previewImage.src = '../admin/img/placeholder-hotel.jpg';
                     }
 
+                    // Fetch hotel amenities
+                    fetch(`handlers/get_hotel_amenities.php?id=${hotelId}`)
+                        .then(response => response.json())
+                        .then(amenitiesData => {
+                            if (amenitiesData.status === 'success') {
+                                // Clear all checkboxes first
+                                document.querySelectorAll('#hotelAmenitiesForm input[type="checkbox"]')
+                                    .forEach(checkbox => checkbox.checked = false);
+
+                                // Check the amenities that hotel has
+                                amenitiesData.data.forEach(amenityId => {
+                                    const checkbox = document.querySelector(`#hotelAmenitiesForm input[value="${amenityId}"]`);
+                                    if (checkbox) {
+                                        checkbox.checked = true;
+                                    }
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching amenities:', error);
+                        });
+
                     // Show the modal with footer buttons
                     const editModal = new bootstrap.Modal(document.getElementById('editHotelModal'));
                     editModal.show();
