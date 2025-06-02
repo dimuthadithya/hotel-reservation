@@ -141,19 +141,23 @@ CREATE TABLE room_bookings (
 );
 
 -- 11. Payments Table
-CREATE TABLE payments (
-    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE payments (    payment_id INT PRIMARY KEY AUTO_INCREMENT,
     booking_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    payment_method VARCHAR(50) NOT NULL,
+    payment_method ENUM('bank_transfer', 'cash') NOT NULL,
     transaction_id VARCHAR(100),
     payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-    currency VARCHAR(3) DEFAULT 'LKR',
-    payment_gateway VARCHAR(50),
-    gateway_response JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
+    payment_deadline DATETIME,             -- Deadline for payment completion
+    status ENUM('pending', 'completed', 'failed', 'expired') DEFAULT 'pending',
+    bank_slip VARCHAR(255) NULL,           -- Path to uploaded bank slip
+    bank_reference VARCHAR(100) NULL,      -- Bank reference number
+    transfer_date DATE NULL,               -- Date of bank transfer
+    bank_name VARCHAR(100) NULL,           -- Name of the bank used
+    notes TEXT NULL,                       -- Any additional notes
+    verified_by INT NULL,                  -- Admin who verified the payment
+    verified_at DATETIME NULL,             -- When payment was verified
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id),
+    FOREIGN KEY (verified_by) REFERENCES users(user_id)
 );
 
 -- 12. Reviews and Ratings Table
@@ -226,6 +230,12 @@ CREATE INDEX idx_reviews_status ON reviews(review_status);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_status ON users(account_status);
+
+-- Payment related indexes
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_deadline ON payments(payment_deadline);
+CREATE INDEX idx_payments_booking ON payments(booking_id);
+CREATE INDEX idx_payments_method ON payments(payment_method);
 
 -- Show tables created
 SHOW TABLES;

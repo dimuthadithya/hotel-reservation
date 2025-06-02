@@ -45,6 +45,11 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                 <i class="fas fa-credit-card"></i> Payments
             </a>
         </li>
+        <li class="nav-item <?php echo $currentPage === 'payment-verification' ? 'active' : ''; ?>">
+            <a href="payment-verification.php">
+                <i class="fas fa-check-circle"></i> Payment Verification
+            </a>
+        </li>
         <li class="nav-item <?php echo $currentPage === 'reviews' ? 'active' : ''; ?>">
             <a href="reviews.php">
                 <i class="fas fa-star"></i> Reviews

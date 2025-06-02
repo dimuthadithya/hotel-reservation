@@ -156,15 +156,15 @@ include_once 'components/nav.php';
             </div>
         </div>
 
-        <form action="handlers/process_payment.php" method="POST">
+        <form action="handlers/process_payment.php" method="POST" enctype="multipart/form-data" id="paymentForm">
             <input type="hidden" name="booking_id" value="<?= $booking_id ?>">
 
-            <div class="payment-methods">
+            <div class="payment-methods mb-4">
                 <h4 class="mb-3">Select Payment Method</h4>
 
                 <div class="payment-method-option">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="payment_method" id="bankTransfer" value="bank_transfer" required>
+                        <input class="form-check-input payment-method-radio" type="radio" name="payment_method" id="bankTransfer" value="bank_transfer" required>
                         <label class="form-check-label" for="bankTransfer">
                             <strong>Bank Transfer</strong>
                             <p class="mb-0 text-muted">Transfer the amount to our bank account</p>
@@ -174,7 +174,7 @@ include_once 'components/nav.php';
 
                 <div class="payment-method-option">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash" required>
+                        <input class="form-check-input payment-method-radio" type="radio" name="payment_method" id="cash" value="cash" required>
                         <label class="form-check-label" for="cash">
                             <strong>Cash Payment</strong>
                             <p class="mb-0 text-muted">Pay in cash at our office</p>
@@ -183,12 +183,86 @@ include_once 'components/nav.php';
                 </div>
             </div>
 
+            <!-- Bank Transfer Details (initially hidden) -->
+            <div id="bankTransferDetails" style="display: none;">
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Bank Account Details</h5>
+                    <p class="mb-0">Please transfer the amount to the following account:</p>
+                    <hr>
+                    <p class="mb-1"><strong>Bank Name:</strong> Commercial Bank</p>
+                    <p class="mb-1"><strong>Account Name:</strong> Pearl Stay Hotels</p>
+                    <p class="mb-1"><strong>Account Number:</strong> 1234567890</p>
+                    <p class="mb-1"><strong>Branch:</strong> Main Branch</p>
+                    <p class="mb-0"><strong>Amount to Transfer:</strong> LKR <?= number_format($booking['total_amount'], 2) ?></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bankName" class="form-label">Bank Used for Transfer *</label>
+                    <input type="text" class="form-control" id="bankName" name="bank_name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bankReference" class="form-label">Bank Reference Number *</label>
+                    <input type="text" class="form-control" id="bankReference" name="bank_reference" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="transferDate" class="form-label">Date of Transfer *</label>
+                    <input type="date" class="form-control" id="transferDate" name="transfer_date" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bankSlip" class="form-label">Upload Bank Slip (PDF, JPG, PNG) *</label>
+                    <input type="file" class="form-control" id="bankSlip" name="bank_slip" accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Cash Payment Details (initially hidden) -->
+            <div id="cashPaymentDetails" style="display: none;">
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Cash Payment Instructions</h5>
+                    <p class="mb-0">Please visit our office to make the cash payment:</p>
+                    <hr>
+                    <p class="mb-1"><strong>Office Address:</strong> 123 Main Street, Colombo</p>
+                    <p class="mb-1"><strong>Office Hours:</strong> Monday to Friday, 9:00 AM - 5:00 PM</p>
+                    <p class="mb-1"><strong>Contact:</strong> +94 11 234 5678</p>
+                    <p class="mb-0"><strong>Amount to Pay:</strong> LKR <?= number_format($booking['total_amount'], 2) ?></p>
+                </div>
+            </div>
+
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Confirm Payment Method</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Confirm Payment Method</button>
                 <a href="dashboard.php" class="btn btn-outline-secondary">Back to Dashboard</a>
             </div>
         </form>
     </div>
+
+    <script>
+        // Show/hide payment details based on selected method
+        document.querySelectorAll('.payment-method-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('bankTransferDetails').style.display =
+                    this.value === 'bank_transfer' ? 'block' : 'none';
+                document.getElementById('cashPaymentDetails').style.display =
+                    this.value === 'cash' ? 'block' : 'none';
+
+                // Update button text
+                document.getElementById('submitBtn').textContent =
+                    this.value === 'bank_transfer' ? 'Submit Payment Details' : 'Confirm Cash Payment';
+
+                // Toggle required attributes
+                const bankFields = document.querySelectorAll('#bankTransferDetails input[required]');
+                bankFields.forEach(field => {
+                    field.required = this.value === 'bank_transfer';
+                });
+            });
+        });
+    </script>
 
     <?php include_once 'components/footer.php'; ?>
 </body>

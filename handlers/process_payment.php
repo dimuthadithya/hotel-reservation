@@ -37,29 +37,84 @@ try {
         throw new Exception('Invalid booking or payment deadline has passed');
     }
 
-    // Record the payment method selection
-    $payment_sql = "INSERT INTO payments (booking_id, amount, payment_method, status) 
-                   VALUES (?, ?, ?, 'pending')";
+    $bank_slip_path = null;
+
+    // Handle bank transfer
+    if ($payment_method === 'bank_transfer') {
+        // Validate required fields
+        if (empty($_POST['bank_name']) || empty($_POST['bank_reference']) || empty($_POST['transfer_date'])) {
+            throw new Exception('Please fill in all required fields');
+        }
+
+        // Handle file upload
+        if (isset($_FILES['bank_slip']) && $_FILES['bank_slip']['error'] === 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
+            $filename = $_FILES['bank_slip']['name'];
+            $filetype = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+            if (!in_array($filetype, $allowed)) {
+                throw new Exception('Invalid file type. Only JPG, PNG and PDF files are allowed');
+            }
+
+            // Generate unique filename
+            $new_filename = 'slip_' . $booking['booking_reference'] . '_' . uniqid() . '.' . $filetype;
+            $upload_path = '../uploads/slips/' . $new_filename;
+
+            // Create directory if it doesn't exist
+            if (!file_exists('../uploads/slips')) {
+                mkdir('../uploads/slips', 0777, true);
+            }
+
+            if (!move_uploaded_file($_FILES['bank_slip']['tmp_name'], $upload_path)) {
+                throw new Exception('Failed to upload bank slip');
+            }
+
+            $bank_slip_path = 'uploads/slips/' . $new_filename;
+        } else {
+            throw new Exception('Bank slip is required');
+        }
+    }
+
+    // Record the payment with deadline
+    $payment_sql = "INSERT INTO payments (
+        booking_id, amount, payment_method, bank_slip, 
+        bank_reference, transfer_date, bank_name, notes, status,
+        payment_deadline
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 12 HOUR))";
+
     $payment_stmt = $conn->prepare($payment_sql);
-    if (!$payment_stmt->execute([$booking_id, $booking['total_amount'], $payment_method])) {
-        throw new Exception('Failed to record payment method');
+    if (!$payment_stmt->execute([
+        $booking_id,
+        $booking['total_amount'],
+        $payment_method,
+        $bank_slip_path,
+        $_POST['bank_reference'] ?? null,
+        $_POST['transfer_date'] ?? null,
+        $_POST['bank_name'] ?? null,
+        $_POST['notes'] ?? null,
+        'pending'
+    ])) {
+        throw new Exception('Failed to record payment');
+    }
+
+    // Update booking payment status
+    $update_booking = $conn->prepare("
+        UPDATE bookings 
+        SET payment_status = 'pending'
+        WHERE booking_id = ?
+    ");
+
+    if (!$update_booking->execute([$booking_id])) {
+        throw new Exception('Failed to update booking status');
     }
 
     $conn->commit();
 
-    // Prepare instructions based on payment method
+    // Set success message based on payment method
     if ($payment_method === 'bank_transfer') {
-        $_SESSION['success'] = 'Please transfer the amount to:<br>
-            Bank: Sample Bank<br>
-            Account Name: Pearl Stay<br>
-            Account Number: 1234567890<br>
-            Branch: Sample Branch<br>
-            Reference: ' . $booking['booking_reference'];
+        $_SESSION['success'] = 'Bank transfer details submitted successfully. Your payment is being verified.';
     } else { // cash payment
-        $_SESSION['success'] = 'Please visit our office to make the cash payment.<br>
-            Address: Sample Address<br>
-            Office Hours: 9 AM - 5 PM<br>
-            Reference: ' . $booking['booking_reference'];
+        $_SESSION['success'] = 'Cash payment option confirmed. Please visit our office to complete the payment.';
     }
 } catch (Exception $e) {
     if ($conn->inTransaction()) {
