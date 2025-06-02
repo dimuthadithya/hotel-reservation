@@ -36,7 +36,7 @@ $allCategories = [
             <i class="fas fa-plus"></i> Add New Amenity
         </button>
     </div>
-    <div class="amenities-list">
+    <div class="amenities-list mt-5">
         <div class="row g-4">
             <?php foreach ($allCategories as $categoryKey => $categoryName): ?>
                 <div class="col-md-4 mb-4">
