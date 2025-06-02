@@ -62,10 +62,24 @@ $totalPrice = $basePrice + $tax;
         <div class="container">
             <h1 class="mb-4">Complete Your Booking</h1>
 
+            <div class="alerts-container">
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?= $_SESSION['error'] ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+            </div>
+
             <div class="row">
                 <!-- Booking Form -->
                 <div class="col-lg-8">
-                    <form id="bookingForm" action="handlers/process_booking.php" method="POST">
+                    <form id="bookingForm" action="/hotel-reservation/handlers/process_booking.php" method="POST">
+                        <?php
+                        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                        ?>
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="room_type_id" value="<?= $roomType['room_type_id'] ?>">
 
                         <div class="guest-form">
@@ -181,45 +195,9 @@ $totalPrice = $basePrice + $tax;
         </div>
     </div>
 
-    <?php include 'components/footer.php'; ?>
-
-    <!-- Bootstrap & jQuery JS -->
+    <?php include 'components/footer.php'; ?> <!-- Bootstrap & jQuery JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> <!-- Display Messages -->
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= $_SESSION['error'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get today's date in YYYY-MM-DD format
-            const today = new Date().toISOString().split('T')[0];
-
-            // Set min date for check-in and check-out
-            document.querySelector('input[name="check_in"]').min = today;
-            document.querySelector('input[name="check_out"]').min = today;
-
-            // Update check-out min date when check-in is selected
-            document.querySelector('input[name="check_in"]').addEventListener('change', function() {
-                document.querySelector('input[name="check_out"]').min = this.value;
-            });
-
-            // Form validation
-            document.getElementById('bookingForm').addEventListener('submit', function(e) {
-                const checkIn = new Date(document.querySelector('input[name="check_in"]').value);
-                const checkOut = new Date(document.querySelector('input[name="check_out"]').value);
-
-                if (checkIn >= checkOut) {
-                    e.preventDefault();
-                    alert('Check-out date must be after check-in date');
-                }
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
