@@ -25,17 +25,9 @@ function validateBookingData($data)
     // If required fields are missing, return early
     if (!empty($errors)) {
         return ['valid' => false, 'errors' => $errors];
-    }
-
-    // Validate email format
+    }    // Validate email format
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format";
-    }
-
-    // Validate phone number (Sri Lankan format)
-    $phone = str_replace(' ', '', $data['phone']);
-    if (!preg_match("/^(\+94|94|0)[1-9][0-9]{8}$/", $phone)) {
-        $errors[] = "Invalid phone number format. Please use a valid Sri Lankan phone number";
     }
 
     // Validate dates
@@ -56,7 +48,6 @@ function validateBookingData($data)
     if ($adults === false || $adults < 1) {
         $errors[] = "Number of adults must be at least 1";
     }
-
     return [
         'valid' => empty($errors),
         'errors' => $errors,
@@ -65,7 +56,7 @@ function validateBookingData($data)
             'first_name' => htmlspecialchars(trim($data['first_name']), ENT_QUOTES, 'UTF-8'),
             'last_name' => htmlspecialchars(trim($data['last_name']), ENT_QUOTES, 'UTF-8'),
             'email' => filter_var($data['email'], FILTER_SANITIZE_EMAIL),
-            'phone' => htmlspecialchars($phone, ENT_QUOTES, 'UTF-8'),
+            'phone' => htmlspecialchars($data['phone'], ENT_QUOTES, 'UTF-8'),
             'check_in' => $data['check_in'],
             'check_out' => $data['check_out'],
             'adults' => $adults,

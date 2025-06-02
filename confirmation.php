@@ -1,5 +1,39 @@
 <?php
 session_start();
+require_once 'config/db.php';
+
+// Check if booking ID is provided
+$booking_id = isset($_GET['booking_id']) ? (int)$_GET['booking_id'] : 0;
+
+if (!$booking_id) {
+  header('Location: index.php');
+  exit;
+}
+
+// Fetch booking details
+$sql = "SELECT b.*, h.hotel_name, h.address, h.contact_phone, h.contact_email,
+               h.district, h.province, rt.type_name as room_type,
+               r.room_number
+        FROM bookings b
+        JOIN hotels h ON b.hotel_id = h.hotel_id
+        JOIN room_types rt ON b.room_type_id = rt.room_type_id
+        JOIN room_bookings rb ON b.booking_id = rb.booking_id
+        JOIN rooms r ON rb.room_id = r.room_id
+        WHERE b.booking_id = :booking_id";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute(['booking_id' => $booking_id]);
+$booking = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$booking) {
+  $_SESSION['error'] = "Booking not found";
+  header('Location: index.php');
+  exit;
+}
+
+// Format dates
+$check_in_date = new DateTime($booking['check_in_date']);
+$check_out_date = new DateTime($booking['check_out_date']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,7 +95,7 @@ session_start();
         <!-- Booking Reference -->
         <div class="booking-reference">
           <p class="mb-1">Your Booking Reference</p>
-          <div class="reference-number">BK123456</div>
+          <div class="reference-number"><?= htmlspecialchars($booking['booking_reference']) ?></div>
         </div>
 
         <!-- Reservation Summary -->
@@ -73,27 +107,27 @@ session_start();
           <div class="detail-grid">
             <div class="detail-item" id="hotelName">
               <span class="detail-label">Hotel</span>
-              <span class="detail-value">Luxury Resort Kandy</span>
+              <span class="detail-value"><?= htmlspecialchars($booking['hotel_name']) ?></span>
             </div>
             <div class="detail-item" id="roomType">
               <span class="detail-label">Room Type</span>
-              <span class="detail-value">Deluxe Lake View Room</span>
+              <span class="detail-value"><?= htmlspecialchars($booking['room_type']) ?> (Room <?= htmlspecialchars($booking['room_number']) ?>)</span>
             </div>
             <div class="detail-item" id="checkInDate">
               <span class="detail-label">Check-in</span>
-              <span class="detail-value">May 15, 2024</span>
+              <span class="detail-value"><?= $check_in_date->format('M d, Y') ?></span>
             </div>
             <div class="detail-item" id="checkOutDate">
               <span class="detail-label">Check-out</span>
-              <span class="detail-value">May 18, 2024</span>
+              <span class="detail-value"><?= $check_out_date->format('M d, Y') ?></span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Guests</span>
-              <span class="detail-value">2 Adults</span>
+              <span class="detail-value"><?= $booking['adults'] ?> Adults<?= $booking['children'] ? ', ' . $booking['children'] . ' Children' : '' ?></span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Total Amount</span>
-              <span class="detail-value">LKR 85,000</span>
+              <span class="detail-value">LKR <?= number_format($booking['total_amount'], 2) ?></span>
             </div>
           </div>
         </div>
@@ -127,17 +161,17 @@ session_start();
             <div class="detail-item" id="hotelAddress">
               <span class="detail-label">Address</span>
               <span class="detail-value">
-                123 Kandy Lake Road<br />
-                Kandy, Sri Lanka
+                <?= htmlspecialchars($booking['address']) ?><br />
+                <?= htmlspecialchars($booking['district']) ?>, <?= htmlspecialchars($booking['province']) ?>
               </span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Phone</span>
-              <span class="detail-value">+94 81 234 5678</span>
+              <span class="detail-value"><?= htmlspecialchars($booking['contact_phone']) ?></span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Email</span>
-              <span class="detail-value">info@luxuryresortkandy.com</span>
+              <span class="detail-value"><?= htmlspecialchars($booking['contact_email']) ?></span>
             </div>
           </div>
         </div> <!-- Actions -->
