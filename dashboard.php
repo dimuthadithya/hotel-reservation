@@ -293,12 +293,9 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                   </div>
                   <div class="d-flex gap-2">
                     <?php if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending'): ?>
-                      <form action="handlers/process_payment.php" method="POST">
-                        <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
-                        <button type="submit" class="btn btn-success btn-sm">
-                          <i class="fas fa-credit-card me-1"></i>Pay Now
-                        </button>
-                      </form>
+                      <a href="payment.php?booking_id=<?= $booking['booking_id'] ?>" class="btn btn-success btn-sm">
+                        <i class="fas fa-credit-card me-1"></i>Pay Now
+                      </a>
                     <?php endif; ?>
 
                     <?php if ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate): ?>

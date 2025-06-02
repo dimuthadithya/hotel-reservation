@@ -142,16 +142,10 @@ try {
         throw new Exception("Failed to create room booking");
     }
 
-    // Update room status
-    $update_room_sql = "UPDATE rooms SET status = 'occupied' WHERE room_id = ?";
-    $update_room_stmt = $conn->prepare($update_room_sql);
-    if (!$update_room_stmt->execute([$room['room_id']])) {
-        throw new Exception("Failed to update room status");
-    }
     $conn->commit();
 
     // Set success message
-    $_SESSION['success'] = "Booking completed successfully!";
+    $_SESSION['success'] = "Booking request received successfully!";
 
     // Check if it's an AJAX request
     if (
@@ -162,7 +156,7 @@ try {
         echo json_encode([
             'success' => true,
             'booking_id' => $booking_id,
-            'message' => 'Booking completed successfully!'
+            'message' => 'Booking request received successfully!'
         ]);
         exit;
     }

@@ -39,9 +39,9 @@ $check_out_date = new DateTime($booking['check_out_date']);
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Booking Confirmed - Pearl Stay</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmation - Pearl Stay</title>
   <!-- Favicon -->
   <link
     rel="apple-touch-icon"
@@ -85,10 +85,12 @@ $check_out_date = new DateTime($booking['check_out_date']);
           <div class="success-icon">
             <i class="fas fa-check"></i>
           </div>
-          <h1>Booking Confirmed!</h1>
+          <h1>Booking Request Received!</h1>
           <p class="text-muted">
-            Thank you for choosing Pearl Stay. Your booking has been
-            confirmed.
+            Thank you for choosing Pearl Stay. Your booking request has been received and is pending confirmation.
+            <?php if ($booking['booking_status'] === 'pending'): ?>
+              <br>Our team will review your booking and contact you shortly.
+            <?php endif; ?>
           </p>
         </div>
 
@@ -96,6 +98,13 @@ $check_out_date = new DateTime($booking['check_out_date']);
         <div class="booking-reference">
           <p class="mb-1">Your Booking Reference</p>
           <div class="reference-number"><?= htmlspecialchars($booking['booking_reference']) ?></div>
+        </div>
+
+        <!-- Status Alert -->
+        <div class="alert alert-info mb-4">
+          <i class="fas fa-info-circle me-2"></i>
+          Your booking is currently <strong>pending confirmation</strong>. We will contact you shortly to confirm your reservation.
+          Please note that room availability will be confirmed during this process.
         </div>
 
         <!-- Reservation Summary -->
@@ -113,18 +122,6 @@ $check_out_date = new DateTime($booking['check_out_date']);
               <span class="detail-label">Room Type</span>
               <span class="detail-value"><?= htmlspecialchars($booking['room_type']) ?> (Room <?= htmlspecialchars($booking['room_number']) ?>)</span>
             </div>
-            <div class="detail-item" id="checkInDate">
-              <span class="detail-label">Check-in</span>
-              <span class="detail-value"><?= $check_in_date->format('M d, Y') ?></span>
-            </div>
-            <div class="detail-item" id="checkOutDate">
-              <span class="detail-label">Check-out</span>
-              <span class="detail-value"><?= $check_out_date->format('M d, Y') ?></span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Guests</span>
-              <span class="detail-value"><?= $booking['adults'] ?> Adults<?= $booking['children'] ? ', ' . $booking['children'] . ' Children' : '' ?></span>
-            </div>
             <div class="detail-item">
               <span class="detail-label">Total Amount</span>
               <span class="detail-value">LKR <?= number_format($booking['total_amount'], 2) ?></span>
@@ -132,54 +129,29 @@ $check_out_date = new DateTime($booking['check_out_date']);
           </div>
         </div>
 
-        <!-- Check-in Instructions -->
+        <!-- Next Steps -->
         <div class="confirmation-section">
           <h2 class="section-title">
-            <i class="fas fa-clipboard-check"></i>
-            Check-in Instructions
+            <i class="fas fa-tasks"></i>
+            Next Steps
           </h2>
-          <div class="important-info">
-            <p class="mb-2">
-              <strong>Check-in Time:</strong> 2:00 PM - 12:00 AM
-            </p>
-            <p class="mb-0">Please present the following at check-in:</p>
-            <ul class="mb-0">
-              <li>Government-issued photo ID</li>
-              <li>Credit card used for booking</li>
-              <li>Booking confirmation (digital copy accepted)</li>
-            </ul>
+          <div class="next-steps">
+            <ol>
+              <li>Wait for our confirmation call or email</li>
+              <li>Upon confirmation, complete the payment within 12 hours</li>
+              <li>Receive your final booking confirmation</li>
+            </ol>
           </div>
         </div>
 
-        <!-- Hotel Contact Information -->
-        <div class="confirmation-section">
-          <h2 class="section-title">
-            <i class="fas fa-hotel"></i>
-            Hotel Information
-          </h2>
-          <div class="row">
-            <div class="detail-item" id="hotelAddress">
-              <span class="detail-label">Address</span>
-              <span class="detail-value">
-                <?= htmlspecialchars($booking['address']) ?><br />
-                <?= htmlspecialchars($booking['district']) ?>, <?= htmlspecialchars($booking['province']) ?>
-              </span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Phone</span>
-              <span class="detail-value"><?= htmlspecialchars($booking['contact_phone']) ?></span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Email</span>
-              <span class="detail-value"><?= htmlspecialchars($booking['contact_email']) ?></span>
-            </div>
-          </div>
-        </div> <!-- Actions -->
-        <div class="action-buttons">
-          <button class="btn action-button print-btn" id="printBtn">
-            <i class="fas fa-print"></i>
-            Print Confirmation
-          </button>
+        <!-- Action Buttons -->
+        <div class="action-buttons text-center mt-4">
+          <a href="dashboard.php#bookings" class="btn btn-primary">
+            <i class="fas fa-history me-2"></i>Check Booking Status
+          </a>
+          <a href="index.php" class="btn btn-outline-secondary">
+            <i class="fas fa-home me-2"></i>Return to Home
+          </a>
         </div>
       </div>
     </div>

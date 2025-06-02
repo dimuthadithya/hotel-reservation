@@ -8,13 +8,14 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if (!isset($_POST['booking_id'])) {
+if (!isset($_POST['booking_id']) || !isset($_POST['payment_method'])) {
     $_SESSION['error'] = 'Invalid payment request';
     header('Location: ../dashboard.php');
     exit;
 }
 
 $booking_id = filter_var($_POST['booking_id'], FILTER_SANITIZE_NUMBER_INT);
+$payment_method = filter_var($_POST['payment_method'], FILTER_SANITIZE_STRING);
 
 try {
     $conn->beginTransaction();
@@ -36,29 +37,30 @@ try {
         throw new Exception('Invalid booking or payment deadline has passed');
     }
 
-    // Process payment (this is where you would integrate with a payment gateway)
-    // For now, we'll just mark it as paid
-    $update_booking = $conn->prepare("
-        UPDATE bookings 
-        SET payment_status = 'paid',
-            payment_date = NOW()
-        WHERE booking_id = ?
-    ");
-
-    if (!$update_booking->execute([$booking_id])) {
-        throw new Exception('Failed to update payment status');
-    }
-
-    // Record the payment
+    // Record the payment method selection
     $payment_sql = "INSERT INTO payments (booking_id, amount, payment_method, status) 
-                   VALUES (?, ?, 'direct', 'completed')";
+                   VALUES (?, ?, ?, 'pending')";
     $payment_stmt = $conn->prepare($payment_sql);
-    if (!$payment_stmt->execute([$booking_id, $booking['total_amount']])) {
-        throw new Exception('Failed to record payment');
+    if (!$payment_stmt->execute([$booking_id, $booking['total_amount'], $payment_method])) {
+        throw new Exception('Failed to record payment method');
     }
 
     $conn->commit();
-    $_SESSION['success'] = 'Payment processed successfully';
+
+    // Prepare instructions based on payment method
+    if ($payment_method === 'bank_transfer') {
+        $_SESSION['success'] = 'Please transfer the amount to:<br>
+            Bank: Sample Bank<br>
+            Account Name: Pearl Stay<br>
+            Account Number: 1234567890<br>
+            Branch: Sample Branch<br>
+            Reference: ' . $booking['booking_reference'];
+    } else { // cash payment
+        $_SESSION['success'] = 'Please visit our office to make the cash payment.<br>
+            Address: Sample Address<br>
+            Office Hours: 9 AM - 5 PM<br>
+            Reference: ' . $booking['booking_reference'];
+    }
 } catch (Exception $e) {
     if ($conn->inTransaction()) {
         $conn->rollBack();
@@ -67,5 +69,5 @@ try {
     $_SESSION['error'] = $e->getMessage();
 }
 
-header('Location: ../dashboard.php');
+header('Location: ../dashboard.php#bookings');
 exit;
