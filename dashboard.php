@@ -240,12 +240,31 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                   $statusClass = 'info';
                   $statusText = 'Upcoming';
                 }
+
+                // Calculate time remaining for payment if booking is confirmed and payment is pending
+                $paymentDeadline = null;
+                $hoursRemaining = 0;
+                if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending' && !empty($booking['payment_deadline'])) {
+                  $paymentDeadline = new DateTime($booking['payment_deadline']);
+                  $timeRemaining = $paymentDeadline->diff($today);
+                  $hoursRemaining = ($timeRemaining->invert) ? ($timeRemaining->d * 24 + $timeRemaining->h) : 0;
+                }
               ?>
                 <div class="booking-card mb-4">
                   <div class="booking-header">
                     <h4><?php echo htmlspecialchars($booking['hotel_name']); ?></h4>
                     <span class="booking-status status-<?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
                   </div>
+
+                  <?php if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending'): ?>
+                    <div class="alert alert-warning">
+                      <i class="fas fa-clock me-2"></i>
+                      Payment Required: <?php echo $hoursRemaining; ?> hours remaining to complete payment
+                      <br>
+                      <small>Booking will be automatically cancelled if payment is not received within the time limit.</small>
+                    </div>
+                  <?php endif; ?>
+
                   <div class="booking-details">
                     <div class="booking-detail-item">
                       <i class="fas fa-calendar"></i>
@@ -273,19 +292,23 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                   </div>
                   <div class="d-flex gap-2">
+                    <?php if ($booking['booking_status'] === 'confirmed' && $booking['payment_status'] === 'pending'): ?>
+                      <form action="handlers/process_payment.php" method="POST">
+                        <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
+                        <button type="submit" class="btn btn-success btn-sm">
+                          <i class="fas fa-credit-card me-1"></i>Pay Now
+                        </button>
+                      </form>
+                    <?php endif; ?>
+
                     <?php if ($booking['booking_status'] === 'checked_out' || $today > $checkOutDate): ?>
                       <!-- Show review button for completed stays -->
                       <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal">
                         <i class="fas fa-star me-1"></i>Write Review
                       </button>
-                      <button class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-download me-1"></i>Invoice
-                      </button>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-redo me-1"></i>Book Again
-                      </button>
-                    <?php elseif ($booking['booking_status'] !== 'cancelled'): ?>
-                      <!-- Show invoice button for all non-cancelled bookings -->
+                    <?php endif; ?>
+
+                    <?php if ($booking['payment_status'] === 'paid'): ?>
                       <button class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-download me-1"></i>Invoice
                       </button>

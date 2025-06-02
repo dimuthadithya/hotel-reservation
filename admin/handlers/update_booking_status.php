@@ -32,7 +32,7 @@ try {
 
     // Get current booking status and room_id
     $stmt = $conn->prepare("
-        SELECT b.booking_status, rb.room_id
+        SELECT b.booking_status, b.payment_status, rb.room_id
         FROM bookings b
         JOIN room_bookings rb ON b.booking_id = rb.booking_id
         WHERE b.booking_id = ?
@@ -58,10 +58,25 @@ try {
         throw new Exception("Invalid status transition from {$current_status} to {$new_status}");
     }
 
-    // Update booking status
-    $stmt = $conn->prepare("UPDATE bookings SET booking_status = ? WHERE booking_id = ?");
-    if (!$stmt->execute([$new_status, $booking_id])) {
-        throw new Exception("Failed to update booking status");
+    // Set payment deadline when confirming booking
+    $payment_deadline = null;
+    if ($new_status === 'confirmed') {
+        $payment_deadline = date('Y-m-d H:i:s', strtotime('+12 hours'));
+        $sql = "UPDATE bookings SET 
+                booking_status = ?, 
+                payment_deadline = ?,
+                payment_status = 'pending'
+                WHERE booking_id = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt->execute([$new_status, $payment_deadline, $booking_id])) {
+            throw new Exception("Failed to update booking status");
+        }
+    } else {
+        // For other status updates
+        $stmt = $conn->prepare("UPDATE bookings SET booking_status = ? WHERE booking_id = ?");
+        if (!$stmt->execute([$new_status, $booking_id])) {
+            throw new Exception("Failed to update booking status");
+        }
     }
 
     // Update room status if necessary
