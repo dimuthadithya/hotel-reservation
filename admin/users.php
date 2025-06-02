@@ -7,6 +7,18 @@
     <div class="content-header">
         <h2>User Management</h2>
     </div>
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_GET['success']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_GET['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_GET['error']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
     <div class="users-list">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -35,7 +47,15 @@
                             <tr>
                                 <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
                                 <td><?= htmlspecialchars($user['email']) ?></td>
-                                <td><span class="badge bg-<?= $user['role'] === 'admin' ? 'primary' : 'secondary' ?>"><?= ucfirst($user['role']) ?></span></td>
+                                <td>
+                                    <form action="handlers/update_role.php" method="POST" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                                        <select name="role" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 100px;">
+                                            <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>User</option>
+                                            <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                        </select>
+                                    </form>
+                                </td>
                                 <td><span class="badge bg-<?= $user['account_status'] === 'active' ? 'success' : ($user['account_status'] === 'pending' ? 'warning' : 'danger') ?>"><?= ucfirst($user['account_status']) ?></span></td>
                                 <td><?= date('Y-m-d', strtotime($user['created_at'])) ?></td>
                                 <td>
