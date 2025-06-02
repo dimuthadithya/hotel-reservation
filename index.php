@@ -6,7 +6,6 @@ $sql = "SELECT * FROM hotels WHERE status = 'active' LIMIT 3";
 $stmt = $conn->query($sql);
 $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-var_dump($hotels);
 ?>
 
 <!DOCTYPE html>
