@@ -117,53 +117,7 @@
           </table>
         </div>
       </div>
-    </div>
-
-    <!-- Latest Reviews -->
-    <div class="col-md-4">
-      <div class="dashboard-widget">
-        <div class="widget-header">
-          <h3>Latest Reviews</h3>
-          <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
-        </div>
-        <div class="reviews-list">
-          <div class="review-item">
-            <div class="review-header">
-              <div class="review-rating">
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-              </div>
-              <small class="text-muted">2 hours ago</small>
-            </div>
-            <p class="review-text">"Excellent service and beautiful rooms. Will definitely come back!"</p>
-            <div class="review-footer">
-              <span class="review-author">- Sarah Williams</span>
-              <span class="review-hotel">Luxury Resort</span>
-            </div>
-          </div>
-          <div class="review-item">
-            <div class="review-header">
-              <div class="review-rating">
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="fas fa-star text-warning"></i>
-                <i class="far fa-star text-warning"></i>
-              </div>
-              <small class="text-muted">5 hours ago</small>
-            </div>
-            <p class="review-text">"Great location and friendly staff. Room was spacious."</p>
-            <div class="review-footer">
-              <span class="review-author">- Robert Brown</span>
-              <span class="review-hotel">City Hotel</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </div>    <!-- Latest Bookings Section End -->
   </div>
 
   <!-- Analytics Section -->

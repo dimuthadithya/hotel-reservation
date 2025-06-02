@@ -38,10 +38,8 @@ CREATE TABLE hotels (
     contact_email VARCHAR(100),
     website_url VARCHAR(255),
     total_rooms INT DEFAULT 0,    property_type ENUM('hotel', 'resort', 'villa', 'homestay', 'guesthouse', 'boutique') DEFAULT 'hotel',
-    status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
-    main_image VARCHAR(255) DEFAULT NULL,
-    average_rating DECIMAL(3, 2) DEFAULT 0.00,
-    total_reviews INT DEFAULT 0,    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',    main_image VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -186,31 +184,7 @@ CREATE TABLE payment_logs (
     INDEX idx_user_log (user_id)
 );
 
--- 12. Reviews and Ratings Table
-CREATE TABLE reviews (
-    review_id INT PRIMARY KEY AUTO_INCREMENT,
-    booking_id INT NOT NULL,
-    user_id INT NOT NULL,
-    hotel_id INT NOT NULL,
-    overall_rating ENUM('1', '2', '3', '4', '5') NOT NULL,
-    cleanliness_rating ENUM('1', '2', '3', '4', '5'),
-    service_rating ENUM('1', '2', '3', '4', '5'),
-    location_rating ENUM('1', '2', '3', '4', '5'),
-    value_rating ENUM('1', '2', '3', '4', '5'),
-    review_title VARCHAR(200),
-    review_text TEXT,
-    pros TEXT,
-    cons TEXT,
-    review_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-    is_verified BOOLEAN DEFAULT FALSE,
-    helpful_votes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id),
-    UNIQUE KEY unique_review (booking_id, user_id)
-);
+-- Reviews table removed
 
 -- 13. Hotel Images Table
 CREATE TABLE hotel_images (
@@ -250,9 +224,6 @@ INSERT INTO amenities (amenity_name, category, icon_class) VALUES
 CREATE INDEX idx_bookings_dates ON bookings(check_in_date, check_out_date);
 CREATE INDEX idx_bookings_status ON bookings(booking_status);
 CREATE INDEX idx_bookings_user ON bookings(user_id);
-CREATE INDEX idx_hotels_rating ON hotels(average_rating);
-CREATE INDEX idx_reviews_hotel ON reviews(hotel_id);
-CREATE INDEX idx_reviews_status ON reviews(review_status);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_status ON users(account_status);
