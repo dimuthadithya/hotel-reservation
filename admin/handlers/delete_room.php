@@ -2,17 +2,17 @@
 require_once '../../config/db.php';
 session_start();
 
-header('Content-Type: application/json');
-
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
+    $_SESSION['error'] = 'Unauthorized access';
+    header('Location: ../rooms.php');
     exit;
 }
 
 // Check if room_id is provided
 if (!isset($_POST['room_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Room ID is required']);
+    $_SESSION['error'] = 'Room ID is required';
+    header('Location: ../rooms.php');
     exit;
 }
 
@@ -30,18 +30,21 @@ try {
     $stmt->execute([$room_id]);
 
     if ($stmt->rowCount() > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Cannot delete room: It has existing active bookings']);
+        $_SESSION['error'] = 'Cannot delete room: It has existing active bookings';
+        header('Location: ../rooms.php');
         exit;
     }
 
     // Delete room
     $stmt = $conn->prepare("DELETE FROM rooms WHERE room_id = ?");
     if ($stmt->execute([$room_id])) {
-        echo json_encode(['status' => 'success', 'message' => 'Room deleted successfully']);
+        $_SESSION['success'] = 'Room deleted successfully';
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Error deleting room']);
+        $_SESSION['error'] = 'Error deleting room';
     }
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
-    exit;
+    $_SESSION['error'] = 'Database error: ' . $e->getMessage();
 }
+
+header('Location: ../rooms.php');
+exit;

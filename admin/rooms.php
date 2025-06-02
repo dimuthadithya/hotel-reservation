@@ -19,7 +19,9 @@ if ($selected_hotel_id) {
 
 <!-- Main Content -->
 <div class="admin-main">
-    <!-- Alert Container -->
+    <?php include 'includes/alert_message.php'; ?>
+
+    <!-- Alert Container (for JavaScript alerts) -->
     <div id="alertContainer" class="alert-container mb-3"></div>
 
     <div class="content-header mb-3">
@@ -288,31 +290,22 @@ if ($selected_hotel_id) {
             .catch(error => {
                 showAlert('danger', 'Error loading room details: ' + error.message);
             });
-    }
-
-    // Function to handle room deletion
+    }    // Function to handle room deletion
     function deleteRoom(roomId, roomNumber) {
         if (confirm(`Are you sure you want to delete Room ${roomNumber}? This action cannot be undone.`)) {
-            fetch('handlers/delete_room.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `room_id=${roomId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        showAlert('success', 'Room deleted successfully');
-                        // Refresh the room list
-                        location.reload();
-                    } else {
-                        showAlert('danger', 'Error deleting room: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    showAlert('danger', 'Error deleting room: ' + error.message);
-                });
+            // Create and submit form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'handlers/delete_room.php';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'room_id';
+            input.value = roomId;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
     }
 
