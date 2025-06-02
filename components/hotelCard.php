@@ -69,7 +69,13 @@
                           <div class="text-end">
                               <div class="price">
                                   <small class="text-muted">per night</small>
-                                  <h5 class="mb-0">LKR <?= number_format($hotel['base_price']) ?></h5>
+                                  <h5 class="mb-0">
+                                      <?php if (isset($hotel['base_price']) && $hotel['base_price'] !== null): ?>
+                                          LKR <?= number_format($hotel['base_price']) ?>
+                                      <?php else: ?>
+                                          <span class="text-muted">Price on request</span>
+                                      <?php endif; ?>
+                                  </h5>
                               </div>
                               <a href="hotel-details.php?id=<?= $hotel['hotel_id'] ?>" class="btn btn-primary mt-2">View Details</a>
                           </div>
