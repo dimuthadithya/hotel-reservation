@@ -6,18 +6,22 @@
 <div class="admin-main">
     <div class="content-header">
         <h2>User Management</h2>
-        <div class="header-actions d-flex gap-2">
-            <select class="form-select" id="userRoleFilter">
-                <option value="">All Roles</option>
-                <option value="user">Customers</option>
-                <option value="admin">Administrators</option>
-            </select>
-            <input
-                type="search"
-                class="form-control"
-                placeholder="Search users..." />
-        </div>
     </div>
+
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+            <?= $_SESSION['success']; ?>
+            <?php unset($_SESSION['success']); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger">
+            <?= $_SESSION['error']; ?>
+            <?php unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
+
     <div class="users-list">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -28,7 +32,7 @@
                         <th>Role</th>
                         <th>Status</th>
                         <th>Joined</th>
-                        <th width="150">Actions</th>
+                        <th width="180">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,20 +50,37 @@
                             <tr>
                                 <td><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></td>
                                 <td><?= htmlspecialchars($user['email']) ?></td>
-                                <td><span class="badge bg-<?= $user['role'] === 'admin' ? 'primary' : 'secondary' ?>"><?= ucfirst($user['role']) ?></span></td>
-                                <td><span class="badge bg-<?= $user['account_status'] === 'active' ? 'success' : ($user['account_status'] === 'pending' ? 'warning' : 'danger') ?>"><?= ucfirst($user['account_status']) ?></span></td>
+                                <td>
+                                    <form action="handlers/update_user.php" method="POST" class="d-inline">
+                                        <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                                        <select name="role" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto;">
+                                            <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>Customer</option>
+                                            <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="handlers/update_user.php" method="POST" class="d-inline">
+                                        <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                                        <select name="account_status" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto;">
+                                            <option value="active" <?= $user['account_status'] === 'active' ? 'selected' : '' ?>>Active</option>
+                                            <option value="suspended" <?= $user['account_status'] === 'suspended' ? 'selected' : '' ?>>Suspended</option>
+                                            <option value="pending" <?= $user['account_status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
+                                        </select>
+                                    </form>
+                                </td>
                                 <td><?= date('Y-m-d', strtotime($user['created_at'])) ?></td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-info btn-sm" onclick="viewUser(<?= $user['user_id'] ?>)">
+                                        <button class="btn btn-info btn-sm" title="View User Details">
                                             <i class="fas fa-eye fa-sm"></i>
                                         </button>
-                                        <button class="btn btn-warning btn-sm" onclick="editUser(<?= $user['user_id'] ?>)">
+                                        <button class="btn btn-warning btn-sm" title="Edit User">
                                             <i class="fas fa-edit fa-sm"></i>
                                         </button>
-                                        <form action="handlers/delete_user.php" method="POST" style="display: inline;">
+                                        <form action="handlers/delete_user.php" method="POST" class="d-inline">
                                             <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete User" onclick="return confirm('Are you sure you want to delete this user?');">
                                                 <i class="fas fa-trash fa-sm"></i>
                                             </button>
                                         </form>

@@ -117,7 +117,7 @@
           </table>
         </div>
       </div>
-    </div>    <!-- Latest Bookings Section End -->
+    </div> <!-- Latest Bookings Section End -->
   </div>
 
   <!-- Analytics Section -->
