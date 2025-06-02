@@ -29,73 +29,50 @@ session_start();
   <?php include 'components/nav.php'; ?>
 
   <div class="container py-5">
-    <div class="row">
-      <div class="col-lg-8">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center mb-5">
         <h1 class="mb-4">Contact Us</h1>
-        <p class="lead mb-5">Have any questions? We'd love to hear from you.</p>
-
-        <form id="contactForm" class="contact-form">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="name" placeholder="Your Name" required />
-                <label for="name">Your Name</label>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-floating">
-                <input type="email" class="form-control" id="email" placeholder="Email Address" required />
-                <label for="email">Email Address</label>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="subject" placeholder="Subject" required />
-                <label for="subject">Subject</label>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-floating">
-                <textarea class="form-control" id="message" style="height: 150px" placeholder="Message" required></textarea>
-                <label for="message">Message</label>
-              </div>
-            </div>
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
-          </div>
-        </form>
+        <p class="lead">Have any questions? Here's how you can reach us.</p>
       </div>
 
-      <div class="col-lg-4">
-        <div class="contact-info mt-5 mt-lg-0">
-          <h3>Get in Touch</h3>
-          <div class="info-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <div>
-              <h4>Location</h4>
-              <p>123 Kandy Lake Road<br>Kandy, Sri Lanka</p>
+      <div class="col-lg-8">
+        <div class="contact-info">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                  <h4>Location</h4>
+                  <p>123 Kandy Lake Road<br>Kandy, Sri Lanka</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="info-item">
-            <i class="fas fa-phone"></i>
-            <div>
-              <h4>Call Us</h4>
-              <p>+94 81 234 5678<br>+94 81 234 5679</p>
+            <div class="col-md-6">
+              <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                  <h4>Call Us</h4>
+                  <p>+94 81 234 5678<br>+94 81 234 5679</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="info-item">
-            <i class="fas fa-envelope"></i>
-            <div>
-              <h4>Email Us</h4>
-              <p>info@pearlstay.com<br>support@pearlstay.com</p>
+            <div class="col-md-6">
+              <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                  <h4>Email Us</h4>
+                  <p>info@pearlstay.com<br>support@pearlstay.com</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="info-item">
-            <i class="fas fa-clock"></i>
-            <div>
-              <h4>Open Hours</h4>
-              <p>Monday - Friday<br>9:00 AM - 5:00 PM</p>
+            <div class="col-md-6">
+              <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <h4>Open Hours</h4>
+                  <p>Monday - Friday<br>9:00 AM - 5:00 PM</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -119,9 +96,6 @@ session_start();
   </div>
 
   <?php include 'components/footer.php'; ?>
-
-  <!-- Custom JS -->
-  <script src="assets/js/contact.js"></script>
 </body>
 
 </html>
