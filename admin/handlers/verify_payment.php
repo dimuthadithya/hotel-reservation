@@ -4,21 +4,21 @@ session_start();
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access']);
+    $_SESSION['error'] = 'Unauthorized access';
+    header('Location: ../payment-verification.php');
     exit;
 }
 
 // Check if required parameters are provided
-if (!isset($_POST['payment_id']) || !isset($_POST['status'])) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Missing required parameters']);
+if (!isset($_GET['payment_id']) || !isset($_GET['status'])) {
+    $_SESSION['error'] = 'Missing required parameters';
+    header('Location: ../payment-verification.php');
     exit;
 }
 
-$payment_id = filter_var($_POST['payment_id'], FILTER_SANITIZE_NUMBER_INT);
-$status = filter_var($_POST['status'], FILTER_SANITIZE_STRING);
-$notes = isset($_POST['notes']) ? filter_var($_POST['notes'], FILTER_SANITIZE_STRING) : null;
+$payment_id = filter_var($_GET['payment_id'], FILTER_SANITIZE_NUMBER_INT);
+$status = filter_var($_GET['status'], FILTER_SANITIZE_STRING);
+$notes = isset($_GET['notes']) ? filter_var($_GET['notes'], FILTER_SANITIZE_STRING) : null;
 
 try {
     $conn->beginTransaction();
@@ -110,12 +110,15 @@ try {
     }
 
     $conn->commit();
-    echo json_encode(['status' => 'success', 'message' => 'Payment status updated successfully']);
+    $_SESSION['success'] = 'Payment status updated successfully';
+    header('Location: ../payment-verification.php');
+    exit;
 } catch (Exception $e) {
     if ($conn->inTransaction()) {
         $conn->rollBack();
     }
     error_log("Error in verify_payment.php: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    $_SESSION['error'] = $e->getMessage();
+    header('Location: ../payment-verification.php');
+    exit;
 }

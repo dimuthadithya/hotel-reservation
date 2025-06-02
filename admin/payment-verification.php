@@ -2,6 +2,90 @@
 include_once 'includes/header.php';
 include_once 'includes/sidebar.php';
 
+// Handle view payment details
+$paymentDetails = null;
+if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
+    $viewStmt = $conn->prepare("
+        SELECT p.*, 
+            b.booking_reference, b.guest_name, b.guest_email, b.guest_phone,
+            b.check_in_date, b.check_out_date,
+            h.hotel_name,
+            rt.type_name as room_type,
+            r.room_number,
+            u.first_name as verified_by_name,
+            u.last_name as verified_by_lastname
+        FROM payments p
+        JOIN bookings b ON p.booking_id = b.booking_id
+        JOIN hotels h ON b.hotel_id = h.hotel_id
+        JOIN room_types rt ON b.room_type_id = rt.room_type_id
+        JOIN room_bookings rb ON b.booking_id = rb.booking_id
+        JOIN rooms r ON rb.room_id = r.room_id
+        LEFT JOIN users u ON p.verified_by = u.user_id
+        WHERE p.payment_id = ?
+    ");
+    $viewStmt->execute([$_GET['id']]);
+    $payment = $viewStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($payment) {
+        ob_start();
+?>
+        <div class="payment-details">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="mb-3">Payment Information</h6>
+                    <p><strong>Payment ID:</strong> <?= htmlspecialchars($payment['payment_id']) ?></p>
+                    <p><strong>Amount:</strong> LKR <?= number_format($payment['amount'], 2) ?></p>
+                    <p><strong>Method:</strong> <?= ucfirst(str_replace('_', ' ', $payment['payment_method'])) ?></p>
+                    <p><strong>Status:</strong> <?= ucfirst($payment['status']) ?></p>
+                    <p><strong>Date:</strong> <?= date('M d, Y H:i', strtotime($payment['payment_date'])) ?></p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="mb-3">Booking Information</h6>
+                    <p><strong>Reference:</strong> <?= htmlspecialchars($payment['booking_reference']) ?></p>
+                    <p><strong>Hotel:</strong> <?= htmlspecialchars($payment['hotel_name']) ?></p>
+                    <p><strong>Room Type:</strong> <?= htmlspecialchars($payment['room_type']) ?></p>
+                    <p><strong>Room Number:</strong> <?= htmlspecialchars($payment['room_number']) ?></p>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="mb-3">Guest Information</h6>
+                    <p><strong>Name:</strong> <?= htmlspecialchars($payment['guest_name']) ?></p>
+                    <p><strong>Email:</strong> <?= htmlspecialchars($payment['guest_email']) ?></p>
+                    <p><strong>Phone:</strong> <?= htmlspecialchars($payment['guest_phone']) ?></p>
+                </div>
+                <?php if ($payment['payment_method'] === 'bank_transfer'): ?>
+                    <div class="col-md-6">
+                        <h6 class="mb-3">Bank Transfer Details</h6>
+                        <p><strong>Bank Name:</strong> <?= htmlspecialchars($payment['bank_name']) ?></p>
+                        <p><strong>Reference:</strong> <?= htmlspecialchars($payment['bank_reference']) ?></p>
+                        <p><strong>Transfer Date:</strong> <?= date('M d, Y', strtotime($payment['transfer_date'])) ?></p>
+                        <?php if ($payment['bank_slip']): ?>
+                            <p><strong>Bank Slip:</strong> <a href="../<?= htmlspecialchars($payment['bank_slip']) ?>" target="_blank">View Slip</a></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($payment['verified_by']): ?>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="mb-3">Verification Information</h6>
+                        <p><strong>Verified By:</strong> <?= htmlspecialchars($payment['verified_by_name'] . ' ' . $payment['verified_by_lastname']) ?></p>
+                        <p><strong>Verified At:</strong> <?= date('M d, Y H:i', strtotime($payment['verified_at'])) ?></p>
+                        <?php if ($payment['notes']): ?>
+                            <p><strong>Notes:</strong> <?= nl2br(htmlspecialchars($payment['notes'])) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+<?php
+        $paymentDetails = ob_get_clean();
+    }
+}
+
 // Fetch payments with booking and user details
 $sql = "SELECT 
             p.*, 
@@ -25,6 +109,22 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="content-header">
         <h2>Payment Verification</h2>
     </div>
+
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $_SESSION['success'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= $_SESSION['error'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
     <div class="payments-list">
         <div class="table-responsive">
@@ -70,32 +170,33 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button type="button"
+                                    <a href="payment-verification.php?action=view&id=<?= $payment['payment_id'] ?>"
                                         class="btn btn-sm btn-outline-primary"
-                                        onclick="viewPayment(<?= $payment['payment_id'] ?>)"
                                         title="View Details">
                                         <i class="fas fa-eye"></i>
-                                    </button> <?php if ($payment['status'] === 'pending'): ?>
+                                    </a>
+
+                                    <?php if ($payment['status'] === 'pending'): ?>
                                         <?php if ($payment['payment_method'] === 'bank_transfer'): ?>
-                                            <button type="button"
+                                            <a href="handlers/verify_payment.php?payment_id=<?= $payment['payment_id'] ?>&status=completed&notes=<?= urlencode('Bank transfer verified by admin') ?>"
                                                 class="btn btn-sm btn-outline-success"
-                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'completed')"
+                                                onclick="return confirm('Are you sure you want to verify this payment?')"
                                                 title="Verify Bank Transfer">
                                                 <i class="fas fa-check"></i> Verify Transfer
-                                            </button>
-                                            <button type="button"
+                                            </a>
+                                            <a href="handlers/verify_payment.php?payment_id=<?= $payment['payment_id'] ?>&status=failed&notes=<?= urlencode('Bank transfer rejected by admin') ?>"
                                                 class="btn btn-sm btn-outline-danger"
-                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'failed')"
+                                                onclick="return confirm('Are you sure you want to reject this payment?')"
                                                 title="Reject Transfer">
                                                 <i class="fas fa-times"></i> Reject
-                                            </button>
+                                            </a>
                                         <?php else: ?>
-                                            <button type="button"
+                                            <a href="handlers/verify_payment.php?payment_id=<?= $payment['payment_id'] ?>&status=completed&notes=<?= urlencode('Cash payment verified by admin') ?>"
                                                 class="btn btn-sm btn-outline-success"
-                                                onclick="verifyPayment(<?= $payment['payment_id'] ?>, 'completed')"
+                                                onclick="return confirm('Are you sure you want to mark this payment as received?')"
                                                 title="Mark Cash Payment as Received">
                                                 <i class="fas fa-money-bill"></i> Mark as Paid
-                                            </button>
+                                            </a>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
@@ -108,7 +209,7 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- Payment Details Modal -->
+<!-- Payment Details -->
 <div class="modal fade" id="paymentDetailsModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -117,95 +218,14 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="paymentDetailsContent">
-                <!-- Content will be loaded dynamically -->
+                <?php if (isset($paymentDetails)): ?>
+                    <?= $paymentDetails ?>
+                <?php else: ?>
+                    <p>Select a payment to view details.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Verify Payment Modal -->
-<div class="modal fade" id="verifyPaymentModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Verify Payment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="verifyPaymentForm">
-                    <input type="hidden" id="verifyPaymentId">
-                    <input type="hidden" id="verifyPaymentStatus">
-                    <div class="mb-3">
-                        <label for="verificationNotes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="verificationNotes" rows="3"
-                            placeholder="Add any notes about the verification"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitVerification()">Confirm</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Function to view payment details
-    async function viewPayment(paymentId) {
-        try {
-            const response = await fetch(`handlers/get_payment_details.php?id=${paymentId}`);
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                document.getElementById('paymentDetailsContent').innerHTML = data.html;
-                new bootstrap.Modal(document.getElementById('paymentDetailsModal')).show();
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to load payment details');
-        }
-    }
-
-    // Function to verify payment
-    function verifyPayment(paymentId, status) {
-        document.getElementById('verifyPaymentId').value = paymentId;
-        document.getElementById('verifyPaymentStatus').value = status;
-        document.getElementById('verificationNotes').value = '';
-
-        const modal = new bootstrap.Modal(document.getElementById('verifyPaymentModal'));
-        modal.show();
-    }
-
-    // Function to submit verification
-    async function submitVerification() {
-        const paymentId = document.getElementById('verifyPaymentId').value;
-        const status = document.getElementById('verifyPaymentStatus').value;
-        const notes = document.getElementById('verificationNotes').value;
-
-        try {
-            const response = await fetch('handlers/verify_payment.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `payment_id=${paymentId}&status=${status}&notes=${encodeURIComponent(notes)}`
-            });
-
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                location.reload(); // Reload to show updated status
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to verify payment');
-        }
-    }
-</script>
 
 <?php include_once 'includes/footer.php'; ?>
