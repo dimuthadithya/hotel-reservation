@@ -39,14 +39,10 @@ function editHotel(hotelId) {
     .catch((error) => console.error('Error:', error));
 }
 
-// Add Hotel Form Validation and Submission
+// Add Hotel Form Validation
 document
   .getElementById('addHotelForm')
   .addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-
     // Client-side validation
     const requiredFields = [
       'hotel_name',
@@ -70,6 +66,7 @@ document
     });
 
     if (!isValid) {
+      e.preventDefault();
       alert('Please fill in all required fields');
       return;
     }
@@ -80,47 +77,14 @@ document
       const file = fileInput.files[0];
       if (file.size > 2 * 1024 * 1024) {
         // 2MB
+        e.preventDefault();
         alert('File size too large. Maximum size is 2MB.');
         return;
       }
       if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
+        e.preventDefault();
         alert('Invalid file type. Only JPG, PNG and GIF are allowed.');
         return;
       }
     }
-
-    // Submit form
-    fetch(this.getAttribute('action'), {
-      method: 'POST',
-      body: formData
-    })
-      .then((response) => response.text())
-      .then((text) => {
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          throw new Error('Invalid server response');
-        }
-      })
-      .then((data) => {
-        if (data.status === 'success') {
-          // Close the modal
-          const addModal = bootstrap.Modal.getInstance(
-            document.getElementById('addHotelModal')
-          );
-          addModal.hide();
-
-          // Show success message
-          alert(data.message || 'Hotel added successfully!');
-
-          // Refresh the page
-          location.reload();
-        } else {
-          alert(data.message || 'Error adding hotel');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error adding hotel. Please try again.');
-      });
   });

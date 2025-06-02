@@ -65,26 +65,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $conn->commit();
 
-        // Return JSON response
-        header('Content-Type: application/json');
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Hotel added successfully!',
-            'hotel_id' => $hotel_id
-        ]);
-        exit();
+        $_SESSION['success'] = 'Hotel added successfully!';
     } catch (Exception $e) {
-        $conn->rollBack();
-
-        // Return JSON error response
-        header('Content-Type: application/json');
-        echo json_encode([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ]);
-        exit();
+        if ($conn) {
+            $conn->rollBack();
+        }
+        $_SESSION['error'] = $e->getMessage();
     }
+
+    header('Location: ../hotels.php');
+    exit();
 } else {
-    header("Location: ../hotels.php");
+    $_SESSION['error'] = 'Invalid request method';
+    header('Location: ../hotels.php');
     exit();
 }
