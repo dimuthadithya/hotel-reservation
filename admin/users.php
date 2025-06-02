@@ -60,21 +60,58 @@
                                 <td><?= date('Y-m-d', strtotime($user['created_at'])) ?></td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-info btn-sm" onclick="viewUser(<?= $user['user_id'] ?>)">
+                                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewUserModal<?= $user['user_id'] ?>">
                                             <i class="fas fa-eye fa-sm"></i>
-                                        </button>
-                                        <button class="btn btn-warning btn-sm" onclick="editUser(<?= $user['user_id'] ?>)">
-                                            <i class="fas fa-edit fa-sm"></i>
                                         </button>
                                         <form action="handlers/delete_user.php" method="POST" style="display: inline;">
                                             <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">
                                                 <i class="fas fa-trash fa-sm"></i>
                                             </button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
+                            <!-- User View Modal -->
+                            <div class="modal fade" id="viewUserModal<?= $user['user_id'] ?>" tabindex="-1" aria-labelledby="viewUserModalLabel<?= $user['user_id'] ?>" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="viewUserModalLabel<?= $user['user_id'] ?>">User Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <strong>Name:</strong>
+                                                <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>Email:</strong>
+                                                <?= htmlspecialchars($user['email']) ?>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>Role:</strong>
+                                                <?= ucfirst(htmlspecialchars($user['role'])) ?>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>Status:</strong>
+                                                <?= ucfirst(htmlspecialchars($user['account_status'])) ?>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>Phone:</strong>
+                                                <?= htmlspecialchars($user['phone'] ?? 'Not provided') ?>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>Joined:</strong>
+                                                <?= date('F j, Y', strtotime($user['created_at'])) ?>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     <?php endforeach;
                     endif; ?>
                 </tbody>
