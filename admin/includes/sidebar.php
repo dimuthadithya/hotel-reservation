@@ -21,11 +21,6 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     }
     ?>
     <div class="sidebar-user">
-        <img
-            src="<?= htmlspecialchars($profile_image) ?>"
-            alt="<?= htmlspecialchars($full_name) ?>"
-            class="admin-avatar"
-            onerror="this.src='../assets/img/avatar1.jpg';" />
         <div class="admin-info">
             <h6 class="admin-name"><?= htmlspecialchars($full_name) ?></h6>
             <span class="admin-role"><?= ucfirst(htmlspecialchars($user['role'])) ?></span>

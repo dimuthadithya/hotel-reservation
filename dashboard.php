@@ -77,27 +77,9 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
 
   <!-- Dashboard Content -->
   <div class="dashboard-container">
-    <div class="container">
-      <!-- Profile Card -->
+    <div class="container"> <!-- Profile Card -->
       <div class="profile-card">
         <div class="profile-header">
-          <div class="position-relative">
-            <img
-              src="assets/img/avatar1.jpg"
-              alt="Profile"
-              class="profile-avatar"
-              id="profileImage" />
-            <label
-              for="profileImageUpload"
-              class="position-absolute bottom-0 end-0 btn btn-sm btn-light rounded-circle">
-              <i class="fas fa-camera"></i>
-              <input
-                type="file"
-                id="profileImageUpload"
-                class="d-none"
-                accept="image/*" />
-            </label>
-          </div>
           <div class="profile-info">
             <h2><?php echo $user['first_name'] . ' ' . $user['last_name']; ?></h2>
             <p class="text-muted mb-2"><?php echo $user['email']; ?></p>
