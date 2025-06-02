@@ -7,12 +7,11 @@
  */
 require_once __DIR__ . '/../includes/utility_functions.php';
 ?>
-<div class="hotel-card card mb-4"
-    data-property-type="<?= strtolower($hotel['property_type']) ?>"
-    data-star-rating="<?= intval($hotel['star_rating']) ?>"
-    data-rating="<?= floatval($hotel['average_rating']) ?>"
-    data-price="<?= floatval($hotel['base_price']) ?>"
-    data-amenities='<?= htmlspecialchars(json_encode($amenities), ENT_QUOTES, 'UTF-8') ?>'>
+<div class="hotel-card card mb-4" data-property-type="<?= strtolower($hotel['property_type'] ?? '') ?>"
+    data-star-rating="<?= intval($hotel['star_rating'] ?? 0) ?>"
+    data-rating="<?= isset($hotel['average_rating']) ? floatval($hotel['average_rating']) : 0 ?>"
+    data-price="<?= isset($hotel['base_price']) ? floatval($hotel['base_price']) : 0 ?>"
+    data-amenities='<?= !empty($amenities) ? htmlspecialchars(json_encode($amenities), ENT_QUOTES, 'UTF-8') : "[]" ?>'>
 
     <!-- Hotel Image -->
     <img
@@ -36,10 +35,8 @@ require_once __DIR__ . '/../includes/utility_functions.php';
                     <small class="text-muted"><?= htmlspecialchars($hotel['district']) ?>, <?= htmlspecialchars($hotel['province']) ?></small>
                 <?php endif; ?>
             </p>
-        </div>
-
-        <!-- Review Section -->
-        <?php if ($hotel['average_rating'] > 0): ?>
+        </div> <!-- Review Section -->
+        <?php if (isset($hotel['average_rating']) && $hotel['average_rating'] > 0): ?>
             <div class="review-score mb-2">
                 <span class="score"><?= number_format($hotel['average_rating'], 1) ?></span>
                 <span class="score-text"><?= getRatingText($hotel['average_rating']) ?></span>

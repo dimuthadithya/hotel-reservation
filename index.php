@@ -2,7 +2,12 @@
 session_start();
 include './config/db.php';
 
-$sql = "SELECT * FROM hotels WHERE status = 'active' LIMIT 3";
+$sql = "SELECT DISTINCT h.* 
+       FROM hotels h
+       LEFT JOIN room_types rt ON h.hotel_id = rt.hotel_id AND rt.status = 'active'
+       WHERE h.status = 'active'
+       GROUP BY h.hotel_id
+       LIMIT 3";
 $stmt = $conn->query($sql);
 $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -116,13 +121,17 @@ $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // hotels
         foreach ($hotels as $hotel) {
 
-          $hotelName = $hotel['hotel_name'];
-          $hotelId = $hotel['hotel_id'];
-          $hotelDistrict   = $hotel['district'];
-          $hotelImage = $hotel['main_image'];
+          // Fetch amenities for this hotel
+          $amenitiesQuery = "SELECT a.amenity_name 
+                           FROM hotel_amenities ha
+                           JOIN amenities a ON ha.amenity_id = a.amenity_id
+                           WHERE ha.hotel_id = ?
+                           ORDER BY a.category";
+          $amenitiesStmt = $conn->prepare($amenitiesQuery);
+          $amenitiesStmt->execute([$hotel['hotel_id']]);
+          $amenities = $amenitiesStmt->fetchAll(PDO::FETCH_COLUMN);
 
-
-          include './components/indexHotelCard.php';
+          include 'components/hotelCard.php';
         }
         ?>
       </div>

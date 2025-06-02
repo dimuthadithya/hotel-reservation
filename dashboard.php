@@ -308,12 +308,7 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php else: ?>
                           <span class="badge bg-warning">Cash Payment on Arrival</span>
                         <?php endif; ?>
-                      <?php endif; ?>
-                    <?php endif; ?> <?php if ($booking['payment_status'] === 'paid'): ?>
-                      <button class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-download me-1"></i>Invoice
-                      </button>
-                    <?php endif; ?>
+                      <?php endif; ?> <?php endif; ?>
                   </div>
                 </div>
               <?php endforeach; ?>
