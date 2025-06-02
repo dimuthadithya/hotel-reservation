@@ -290,19 +290,19 @@ if ($selected_hotel_id) {
             .catch(error => {
                 showAlert('danger', 'Error loading room details: ' + error.message);
             });
-    }    // Function to handle room deletion
+    } // Function to handle room deletion
     function deleteRoom(roomId, roomNumber) {
         if (confirm(`Are you sure you want to delete Room ${roomNumber}? This action cannot be undone.`)) {
             // Create and submit form
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'handlers/delete_room.php';
-            
+
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'room_id';
             input.value = roomId;
-            
+
             form.appendChild(input);
             document.body.appendChild(form);
             form.submit();
