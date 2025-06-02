@@ -55,5 +55,10 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
                 <i class="fas fa-users"></i> Users
             </a>
         </li>
+        <li class="nav-item">
+            <a href="../handlers/logout.php">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </li>
     </ul>
 </div>

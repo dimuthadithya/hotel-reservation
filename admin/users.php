@@ -6,17 +6,6 @@
 <div class="admin-main">
     <div class="content-header">
         <h2>User Management</h2>
-        <div class="header-actions d-flex gap-2">
-            <select class="form-select" id="userRoleFilter">
-                <option value="">All Roles</option>
-                <option value="user">Customers</option>
-                <option value="admin">Administrators</option>
-            </select>
-            <input
-                type="search"
-                class="form-control"
-                placeholder="Search users..." />
-        </div>
     </div>
     <div class="users-list">
         <div class="table-responsive">
