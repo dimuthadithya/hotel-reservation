@@ -3,7 +3,7 @@ include_once '../../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_POST['user_id'] ?? '';
-    
+
     if (!empty($user_id)) {
         try {
             // First, check if user exists and is not the last admin
