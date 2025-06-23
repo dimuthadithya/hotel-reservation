@@ -50,14 +50,38 @@ $(document).ready(function () {
   $('.newsletter-section button').on('click', function () {
     var email = $(this).prev('input[type="email"]').val();
     if (!email) {
-      alert('Please enter your email address');
+      const alertArea =
+        document.querySelector('.newsletter-alerts') ||
+        document.createElement('div');
+      alertArea.className = 'newsletter-alerts mb-3';
+      if (!document.querySelector('.newsletter-alerts')) {
+        document
+          .querySelector('.newsletter-section')
+          .insertBefore(
+            alertArea,
+            document.querySelector('.newsletter-section button')
+          );
+      }
+      alertArea.innerHTML = showBootstrapAlert(
+        'warning',
+        'Missing Email',
+        'Please enter your email address'
+      );
       return;
     }
     if (!isValidEmail(email)) {
-      alert('Please enter a valid email address');
+      alertArea.innerHTML = showBootstrapAlert(
+        'warning',
+        'Invalid Email',
+        'Please enter a valid email address'
+      );
       return;
     }
-    alert('Thank you for subscribing!');
+    alertArea.innerHTML = showBootstrapAlert(
+      'success',
+      'Success',
+      'Thank you for subscribing!'
+    );
     $(this).prev('input[type="email"]').val('');
   });
 
@@ -66,16 +90,32 @@ $(document).ready(function () {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     return regex.test(email);
   }
-
   // Room search validation
   $('.hero-section button').on('click', function () {
     var location = $(this).prev('input[type="text"]').val();
     if (!location) {
-      alert('Please enter a destination');
+      const searchAlertArea =
+        document.querySelector('.search-alerts') ||
+        document.createElement('div');
+      searchAlertArea.className = 'search-alerts mb-3';
+      if (!document.querySelector('.search-alerts')) {
+        document
+          .querySelector('.hero-section')
+          .insertBefore(
+            searchAlertArea,
+            document.querySelector('.hero-section button')
+          );
+      }
+      searchAlertArea.innerHTML = showBootstrapAlert(
+        'warning',
+        'Missing Location',
+        'Please enter a destination'
+      );
       return;
     }
-    // Here you would typically handle the search functionality
-    alert('Searching for rooms in ' + location);
+    // Redirect to search page with location parameter
+    window.location.href =
+      'search.php?location=' + encodeURIComponent(location);
   });
 
   // Enhanced room card hover effects

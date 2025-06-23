@@ -8,21 +8,13 @@ USE pearl_stay_db;
 -- 1. Users Table (Both customers and admins)
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    date_of_birth DATE,
-    nationality VARCHAR(50),
-    address TEXT,
-    city VARCHAR(50),
-    country VARCHAR(50),
-    profile_image VARCHAR(255),
-    -- Role-based system
-    user_role ENUM('customer', 'admin', 'super_admin', 'moderator', 'hotel_manager') DEFAULT 'customer',
-    permissions JSON,
+    profile_image VARCHAR(255),    -- Role-based system
+    role ENUM('admin', 'user') DEFAULT 'user',
     -- Account status and verification
     email_verified BOOLEAN DEFAULT FALSE,
     account_status ENUM('active', 'inactive', 'suspended', 'pending') DEFAULT 'active',
@@ -35,46 +27,20 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 3. Locations/Destinations Table
-CREATE TABLE locations (
-    location_id INT PRIMARY KEY AUTO_INCREMENT,
-    location_name VARCHAR(100) NOT NULL,
-    district VARCHAR(50),
-    province VARCHAR(50),
-    country VARCHAR(50) DEFAULT 'Sri Lanka',
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    description TEXT,
-    is_popular BOOLEAN DEFAULT FALSE,
-    image_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. Hotels Table
+-- 3. Hotels Table
 CREATE TABLE hotels (
-    hotel_id INT PRIMARY KEY AUTO_INCREMENT,
-    hotel_name VARCHAR(150) NOT NULL,
+    hotel_id INT PRIMARY KEY AUTO_INCREMENT,    hotel_name VARCHAR(150) NOT NULL,
     description TEXT,
     address TEXT NOT NULL,
-    location_id INT,
-    star_rating ENUM('1', '2', '3', '4', '5'),
-    contact_phone VARCHAR(20),
+    district VARCHAR(50),
+    province VARCHAR(50),
+    star_rating ENUM('1', '2', '3', '4', '5'),    contact_phone VARCHAR(20),
     contact_email VARCHAR(100),
     website_url VARCHAR(255),
-    check_in_time TIME DEFAULT '14:00:00',
-    check_out_time TIME DEFAULT '12:00:00',
-    total_rooms INT DEFAULT 0,
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    is_eco_friendly BOOLEAN DEFAULT FALSE,
-    property_type ENUM('hotel', 'resort', 'villa', 'homestay', 'guesthouse', 'boutique') DEFAULT 'hotel',
-    status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',
-    featured BOOLEAN DEFAULT FALSE,
-    average_rating DECIMAL(3, 2) DEFAULT 0.00,
-    total_reviews INT DEFAULT 0,
+    total_rooms INT DEFAULT 0,    property_type ENUM('hotel', 'resort', 'villa', 'homestay', 'guesthouse', 'boutique') DEFAULT 'hotel',
+    status ENUM('active', 'inactive', 'pending') DEFAULT 'pending',    main_image VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (location_id) REFERENCES locations(location_id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- 5. Hotel Amenities Table
@@ -145,11 +111,12 @@ CREATE TABLE bookings (
     room_rate DECIMAL(10, 2) NOT NULL,
     taxes DECIMAL(10, 2) DEFAULT 0.00,
     service_charges DECIMAL(10, 2) DEFAULT 0.00,
-
     total_amount DECIMAL(10, 2) NOT NULL,
     currency VARCHAR(3) DEFAULT 'LKR',
     booking_status ENUM('pending', 'confirmed', 'checked_in', 'checked_out', 'cancelled', 'no_show') DEFAULT 'pending',
-    payment_status ENUM('pending', 'paid', 'partially_paid', 'refunded', 'failed') DEFAULT 'pending',
+    payment_status ENUM('pending', 'paid', 'cancelled') DEFAULT 'pending',
+    payment_deadline DATETIME,
+    payment_date DATETIME,
     special_requests TEXT,
     guest_name VARCHAR(100) NOT NULL,
     guest_email VARCHAR(100) NOT NULL,
@@ -175,44 +142,49 @@ CREATE TABLE room_bookings (
 CREATE TABLE payments (
     payment_id INT PRIMARY KEY AUTO_INCREMENT,
     booking_id INT NOT NULL,
-    payment_reference VARCHAR(50) UNIQUE,
-    payment_method ENUM('credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash') NOT NULL,
-    payment_gateway VARCHAR(50),
+    amount DECIMAL(10,2) NOT NULL,
+    payment_method ENUM('bank_transfer', 'cash') NOT NULL,
     transaction_id VARCHAR(100),
-    amount DECIMAL(10, 2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'LKR',
-    payment_status ENUM('pending', 'completed', 'failed', 'refunded', 'cancelled') DEFAULT 'pending',
-    payment_date TIMESTAMP,
-    gateway_response JSON,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
-);
-
--- 12. Reviews and Ratings Table
-CREATE TABLE reviews (
-    review_id INT PRIMARY KEY AUTO_INCREMENT,
-    booking_id INT NOT NULL,
-    user_id INT NOT NULL,
-    hotel_id INT NOT NULL,
-    overall_rating ENUM('1', '2', '3', '4', '5') NOT NULL,
-    cleanliness_rating ENUM('1', '2', '3', '4', '5'),
-    service_rating ENUM('1', '2', '3', '4', '5'),
-    location_rating ENUM('1', '2', '3', '4', '5'),
-    value_rating ENUM('1', '2', '3', '4', '5'),
-    review_title VARCHAR(200),
-    review_text TEXT,
-    pros TEXT,
-    cons TEXT,
-    review_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-    is_verified BOOLEAN DEFAULT FALSE,
-    helpful_votes INT DEFAULT 0,
+    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    payment_deadline DATETIME,             -- Deadline for payment completion
+    status ENUM('pending', 'completed', 'failed', 'expired') DEFAULT 'pending',
+    bank_slip VARCHAR(255) NULL,           -- Path to uploaded bank slip
+    bank_reference VARCHAR(100) NULL,      -- Bank reference number for bank transfers
+    transfer_date DATE NULL,               -- Date of bank transfer
+    bank_name VARCHAR(100) NULL,           -- Name of the bank used for transfer
+    notes TEXT NULL,                       -- Any additional notes
+    verified_by INT NULL,                  -- Admin who verified the payment
+    verified_at DATETIME NULL,             -- When payment was verified
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id),
-    UNIQUE KEY unique_review (booking_id, user_id)
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE RESTRICT,
+    FOREIGN KEY (verified_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    UNIQUE INDEX idx_transaction (transaction_id),
+    INDEX idx_payment_booking (booking_id),
+    INDEX idx_payment_status (status),
+    INDEX idx_payment_method (payment_method),
+    INDEX idx_payment_date (payment_date),
+    INDEX idx_payment_deadline (payment_deadline)
 );
+
+-- 11b. Payment Logs Table
+CREATE TABLE payment_logs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    payment_id INT NOT NULL,
+    booking_id INT NOT NULL,
+    action VARCHAR(50) NOT NULL,           -- e.g., 'payment_initiated', 'payment_verified', 'payment_failed'
+    notes TEXT NULL,                       -- Details about the action
+    user_id INT NOT NULL,                  -- Who performed the action
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id) ON DELETE CASCADE,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+    INDEX idx_payment_log (payment_id),
+    INDEX idx_booking_log (booking_id),
+    INDEX idx_user_log (user_id)
+);
+
+-- Reviews table removed
 
 -- 13. Hotel Images Table
 CREATE TABLE hotel_images (
@@ -229,32 +201,6 @@ CREATE TABLE hotel_images (
     FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id) ON DELETE CASCADE
 );
 
--- Insert Sample Data
-
--- Insert sample admin user
-INSERT INTO users (username, first_name, last_name, email, password, user_role, permissions, account_status) VALUES
-('admin', 'System', 'Administrator', 'admin@pearlstay.lk', '$2y$10$example_hashed_password', 'super_admin', 
-'{"hotels": "full", "bookings": "full", "users": "full", "reviews": "full", "settings": "full"}', 'active'),
-('moderator', 'Review', 'Moderator', 'moderator@pearlstay.lk', '$2y$10$example_hashed_password', 'moderator', 
-'{"reviews": "moderate", "hotels": "view", "bookings": "view"}', 'active');
-
--- Insert sample customer
-INSERT INTO users (first_name, last_name, email, password, phone, nationality, user_role) VALUES
-('John', 'Doe', 'john.doe@email.com', '$2y$10$example_hashed_password', '+1234567890', 'American', 'customer'),
-('Jane', 'Smith', 'jane.smith@email.com', '$2y$10$example_hashed_password', '+9876543210', 'British', 'customer');
-
--- Insert sample locations
-INSERT INTO locations (location_name, district, province, is_popular) VALUES
-('Colombo', 'Colombo', 'Western Province', TRUE),
-('Kandy', 'Kandy', 'Central Province', TRUE),
-('Galle', 'Galle', 'Southern Province', TRUE),
-('Ella', 'Badulla', 'Uva Province', TRUE),
-('Nuwara Eliya', 'Nuwara Eliya', 'Central Province', TRUE),
-('Sigiriya', 'Matale', 'Central Province', TRUE),
-('Anuradhapura', 'Anuradhapura', 'North Central Province', TRUE),
-('Bentota', 'Galle', 'Southern Province', TRUE),
-('Mirissa', 'Matara', 'Southern Province', TRUE),
-('Trincomalee', 'Trincomalee', 'Eastern Province', TRUE);
 
 -- Insert sample amenities
 INSERT INTO amenities (amenity_name, category, icon_class) VALUES
@@ -278,13 +224,15 @@ INSERT INTO amenities (amenity_name, category, icon_class) VALUES
 CREATE INDEX idx_bookings_dates ON bookings(check_in_date, check_out_date);
 CREATE INDEX idx_bookings_status ON bookings(booking_status);
 CREATE INDEX idx_bookings_user ON bookings(user_id);
-CREATE INDEX idx_hotels_location ON hotels(location_id);
-CREATE INDEX idx_hotels_rating ON hotels(average_rating);
-CREATE INDEX idx_reviews_hotel ON reviews(hotel_id);
-CREATE INDEX idx_reviews_status ON reviews(review_status);
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(user_role);
+CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_status ON users(account_status);
+
+-- Payment related indexes
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_deadline ON payments(payment_deadline);
+CREATE INDEX idx_payments_booking ON payments(booking_id);
+CREATE INDEX idx_payments_method ON payments(payment_method);
 
 -- Show tables created
 SHOW TABLES;

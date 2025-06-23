@@ -1,3 +1,30 @@
+// Bootstrap alert helper function
+function showBootstrapAlert(type, title, message) {
+  let icon = '';
+  switch (type) {
+    case 'success':
+      icon = 'check-circle';
+      break;
+    case 'error':
+      icon = 'exclamation-circle';
+      type = 'danger';
+      break;
+    case 'warning':
+      icon = 'exclamation-triangle';
+      break;
+    case 'info':
+      icon = 'info-circle';
+      break;
+  }
+
+  return `
+    <div class='alert alert-${type} alert-dismissible fade show' role='alert'>
+        <strong><i class='fas fa-${icon} me-2'></i>${title}</strong>
+        ${message ? `<br>${message}` : ''}
+        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize date pickers
   const checkInDate = document.getElementById('checkInDate');
@@ -53,32 +80,96 @@ document.addEventListener('DOMContentLoaded', function () {
   if (bookingForm) {
     bookingForm.addEventListener('submit', function (e) {
       e.preventDefault();
-
       if (validateForm()) {
         // Show loading state
         const submitBtn = this.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         submitBtn.innerHTML =
-          '<span class="spinner-border spinner-border-sm me-2"></span>Processing...'; // Simulate form submission
-        setTimeout(() => {
-          // Redirect to confirmation page
-          window.location.href = 'confirmation.html';
-        }, 2000);
+          '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Submit the booking
+        fetch('handlers/process_booking.php', {
+          method: 'POST',
+          body: formData
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Show success message
+              const alertArea =
+                document.querySelector('.booking-form-alerts') ||
+                document.createElement('div');
+              alertArea.className = 'booking-form-alerts mb-3';
+              if (!document.querySelector('.booking-form-alerts')) {
+                bookingForm.parentNode.insertBefore(alertArea, bookingForm);
+              }
+              alertArea.innerHTML = showBootstrapAlert(
+                'success',
+                'Booking Successful!',
+                'Redirecting to confirmation page...'
+              );
+
+              // Redirect after a short delay
+              setTimeout(() => {
+                window.location.href =
+                  'confirmation.php?booking_id=' + data.booking_id;
+              }, 2000);
+            } else {
+              throw new Error(data.message || 'Failed to process booking');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            const alertArea =
+              document.querySelector('.booking-form-alerts') ||
+              document.createElement('div');
+            alertArea.className = 'booking-form-alerts mb-3';
+            if (!document.querySelector('.booking-form-alerts')) {
+              bookingForm.parentNode.insertBefore(alertArea, bookingForm);
+            }
+            alertArea.innerHTML = showBootstrapAlert(
+              'error',
+              'Booking Failed',
+              error.message || 'Failed to process booking. Please try again.'
+            );
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Complete Booking';
+          });
       }
     });
   }
-
   // Form validation helper
   function validateForm() {
     let isValid = true;
     const requiredFields = bookingForm.querySelectorAll('[required]');
+    const errors = [];
 
     requiredFields.forEach((field) => {
       if (!field.value.trim()) {
         isValid = false;
         field.classList.add('is-invalid');
+        errors.push(
+          `Please enter ${field.getAttribute('data-label') || field.name}`
+        );
       } else {
         field.classList.remove('is-invalid');
+
+        // Validate email format if it's an email field
+        if (field.type === 'email' && !isValidEmail(field.value)) {
+          isValid = false;
+          field.classList.add('is-invalid');
+          errors.push('Please enter a valid email address');
+        }
+
+        // Validate phone format if it's a phone field
+        if (field.type === 'tel' && !isValidPhone(field.value)) {
+          isValid = false;
+          field.classList.add('is-invalid');
+          errors.push('Please enter a valid phone number');
+        }
       }
     });
 
@@ -86,22 +177,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const termsCheckbox = document.getElementById('termsCheckbox');
     if (termsCheckbox && !termsCheckbox.checked) {
       isValid = false;
-      showToast('Error', 'Please accept the terms and conditions', 'error');
+      errors.push('Please accept the terms and conditions');
+    }
+
+    // Show validation errors if any
+    if (!isValid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Please Fix the Following:',
+        html: errors.map((err) => `• ${err}`).join('<br>')
+      });
     }
 
     return isValid;
   }
-
   // Price calculation
   function updateTotalPrice() {
     const checkIn = new Date(checkInDate.value);
     const checkOut = new Date(checkOutDate.value);
 
     if (checkIn && checkOut && checkOut > checkIn) {
-      const nights = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
-      const basePrice = 25000; // Price per night in LKR
+      const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+      const basePriceElement = document.getElementById('basePrice');
+      const basePrice = basePriceElement
+        ? parseFloat(basePriceElement.value)
+        : 25000; // Price per night in LKR
       const totalBase = basePrice * nights;
-      const tax = totalBase * 0.1; // 10% tax
+      const taxRate = 0.1; // 10% tax
+      const tax = Math.round(totalBase * taxRate);
       const serviceFee = 2500;
       const total = totalBase + tax + serviceFee;
 
@@ -120,31 +223,29 @@ document.addEventListener('DOMContentLoaded', function () {
       ).textContent = `LKR ${total.toLocaleString()}`;
     }
   }
+  // Notification helper
+  function showNotification(title, message, type = 'success') {
+    Swal.fire({
+      icon: type,
+      title: title,
+      text: message,
+      toast: true,
+      position: 'bottom-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
 
-  // Toast notification
-  function showToast(title, message, type = 'success') {
-    const toastContainer = document.querySelector('.toast-container');
-    if (toastContainer) toastContainer.remove();
+  // Helper functions for validation
+  function isValidEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
 
-    const toast = document.createElement('div');
-    toast.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    toast.innerHTML = `
-            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header ${
-                  type === 'error' ? 'bg-danger text-white' : ''
-                }">
-                    <strong class="me-auto">${title}</strong>
-                    <button type="button" class="btn-close ${
-                      type === 'error' ? 'btn-close-white' : ''
-                    }" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">${message}</div>
-            </div>
-        `;
-    document.body.appendChild(toast);
-
-    const toastEl = document.querySelector('.toast');
-    const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
-    bsToast.show();
+  function isValidPhone(phone) {
+    // Allows formats: +94XXXXXXXXX, 94XXXXXXXXX, 0XXXXXXXXX
+    const regex = /^(\+94|94|0)[1-9][0-9]{8}$/;
+    return regex.test(phone.replace(/\s+/g, ''));
   }
 });
